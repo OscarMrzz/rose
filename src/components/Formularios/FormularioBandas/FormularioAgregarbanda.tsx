@@ -48,24 +48,27 @@ export default function FormularioAgregarbanda({ open, onClose }: Props) {
 
   const handleSubmit = async (evento: React.FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
+    let URLLogo = "";
+     if (selectedFile && formData.nombre_banda){
+      URLLogo = `${formData.nombre_banda?.replace(/\s+/g, "_")}_logo`
+     }
 
     const nuevaBanda: Omit<bandaInterface, "id_banda" | "created_at_banda"> = {
-      ...(formData as bandaInterface),
+      nombre_banda: formData.nombre_banda || "",
+      categoria_banda: formData.categoria_banda || "",
+      path_image_banda: URLLogo,
     };
 
     try {
       await createBanda(nuevaBanda as bandaInterface);
-      let urlLogoParaDB = "";
       // Si hay un archivo seleccionado, subirlo
       if (selectedFile) {
         const resultadoLogo = await subirLogoBanda(
           selectedFile,
-          `${formData.nombre_banda?.replace(/\s+/g, "_")}_logo`,
+          URLLogo,
         );
         // Si la subida falla, solo loguea el error pero no detengas el proceso
-        if (resultadoLogo) {
-          urlLogoParaDB = resultadoLogo;
-        } else {
+        if (!resultadoLogo) {
           console.error("Error al subir el logo de la banda.");
         }
       }

@@ -107,3 +107,44 @@ export async function subirLogoBanda(file: File, nombreArchivo: string): Promise
     }
     return data.path;
 }
+
+
+export async function obtenerUrlLogoBanda(path: string): Promise<string | null> {
+    if (!path || path === "") {
+        return null;
+    }
+
+    try {
+        const { data, error } = await ClienteBrowserSupabase.storage
+            .from('imgLogoBandas')
+            .createSignedUrl(path, 60 * 60 * 24 * 365);
+
+        if (error) {
+            console.error("Error obteniendo URL del logo:", error);
+            return null;
+        }
+
+        return data?.signedUrl ?? null;
+    } catch (error) {
+        console.error("Error inesperado obteniendo URL del logo:", error);
+        return null;
+    }
+}
+
+
+export async function editarLogoBanda(file: File, nombreArchivo: string): Promise<string | null> {
+
+    const nombreFinal = `${nombreArchivo}`;
+    const { data, error } = await ClienteBrowserSupabase.storage
+        .from('imgLogoBandas')
+        .update(nombreFinal, file, {
+            cacheControl: '3600',
+            upsert: true
+        });
+    if (error) {
+        console.error("❌ Error editando el logo de la banda:", error);
+        throw error;
+    }
+    return data.path;
+}
+
