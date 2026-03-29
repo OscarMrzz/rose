@@ -1,0 +1,42 @@
+import { ClienteBrowserSupabase } from "@/lib/supabase";
+
+
+
+export async function login(email: string, password: string) {
+    const { data, error } = await ClienteBrowserSupabase.auth.signInWithPassword({
+        email,
+        password
+    });
+    return { data, error };
+}
+export async function register(email: string, password: string) {
+    const { data, error } = await ClienteBrowserSupabase.auth.signUp({
+        email,
+        password
+    });
+    return { data, error };
+}
+
+export const getUserAuth = async () => {
+    const { data, error } = await ClienteBrowserSupabase.auth.getUser();
+    return { data, error };
+}
+
+export async function logout() {
+    const { error } = await ClienteBrowserSupabase.auth.signOut();
+    return { error };
+}
+
+export async function isSession() {
+    const { data, error } = await ClienteBrowserSupabase.auth.getSession();
+    return { data, error };
+}
+
+export async function getUserProfile() {
+    const { data, error } = await ClienteBrowserSupabase.auth.getUser();
+    return { data, error };
+}
+
+
+
+
