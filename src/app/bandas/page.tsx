@@ -10,9 +10,6 @@ export default function Page() {
   const [bandasList, setBandasList] = useState<bandaInterface[]>([]);
   const [openFormularioAgregar, setOpenFormularioAgregar] = useState(false);
 
-
-
-
   useEffect(() => {
     const fetchBandas = async () => {
       const bandas = await getAllBandas();
@@ -44,8 +41,8 @@ export default function Page() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full gap-4 ">
-          {bandasList.map((banda) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full gap-4 ">
+          {bandasList.map((banda, index) => (
             <BandasCardCompnent
               key={banda.id_banda}
               nombre={banda.nombre_banda}
@@ -53,6 +50,7 @@ export default function Page() {
               grupo={"Grupo 1"}
               subcGrupo={"1"}
               path_image_banda={banda.path_image_banda}
+              entradaAnimacion={index}
             />
           ))}
         </div>
