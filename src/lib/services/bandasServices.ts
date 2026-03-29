@@ -2,7 +2,7 @@
 import { bandaInterface } from "@/interface/interfaces";
 import { ClienteBrowserSupabase } from "@/lib/supabase";
 
-export async function getBandas() {
+export async function getAllBandas() {
     try {
         const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*');
 
@@ -10,7 +10,7 @@ export async function getBandas() {
             console.error(error);
             return [];
         }
-        return  data as bandaInterface[];
+        return data as bandaInterface[];
     } catch (error) {
         console.error(error);
         return [];
@@ -33,8 +33,8 @@ export async function getBandaById(id: string) {
 
 export async function getFilterByCategoria(categoria: string) {
     try {
-        if(categoria === 'todas' || categoria === '') {
-            return await getBandas();
+        if (categoria === 'todas' || categoria === '') {
+            return await getAllBandas();
         }
         const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').eq('categoria', categoria);
         if (error) {
@@ -91,3 +91,19 @@ export async function deleteBanda(id: string) {
     }
 }
 
+
+export async function subirLogoBanda(file: File, nombreArchivo: string): Promise<string | null> {
+
+    const nombreFinal = `${nombreArchivo}`;
+    const { data, error } = await ClienteBrowserSupabase.storage
+        .from('imgLogoBandas')
+        .upload(nombreFinal, file, {
+            cacheControl: '3600',
+            upsert: true
+        });
+    if (error) {
+        console.error("❌ Error subiendo el logo de la banda:", error);
+        throw error;
+    }
+    return data.path;
+}
