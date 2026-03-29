@@ -4,7 +4,7 @@ import { ClienteBrowserSupabase } from "@/lib/supabase";
 
 export async function getAllBandas() {
     try {
-        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*');
+        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').order('nombre_banda', { ascending: true });
 
         if (error) {
             console.error(error);
@@ -19,7 +19,7 @@ export async function getAllBandas() {
 
 export async function getBandaById(id: string) {
     try {
-        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').eq('id', id);
+        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').eq('id_banda', id);
         if (error) {
             console.error(error);
             return [];
@@ -36,7 +36,7 @@ export async function getFilterByCategoria(categoria: string) {
         if (categoria === 'todas' || categoria === '') {
             return await getAllBandas();
         }
-        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').eq('categoria', categoria);
+        const { data, error } = await ClienteBrowserSupabase.from('bandas').select('*').eq('categoria_banda', categoria);
         if (error) {
             console.error(error);
             return [];
@@ -65,7 +65,7 @@ export async function createBanda(banda: bandaInterface) {
 
 export async function updateBanda(id: string, banda: bandaInterface) {
     try {
-        const { data, error } = await ClienteBrowserSupabase.from('bandas').update(banda).eq('id', id);
+        const { data, error } = await ClienteBrowserSupabase.from('bandas').update(banda).eq('id_banda', id);
         if (error) {
             console.error(error);
             return { data: null, error };
@@ -79,7 +79,7 @@ export async function updateBanda(id: string, banda: bandaInterface) {
 
 export async function deleteBanda(id: string) {
     try {
-        const { data, error } = await ClienteBrowserSupabase.from('bandas').delete().eq('id', id);
+        const { data, error } = await ClienteBrowserSupabase.from('bandas').delete().eq('id_banda', id);
         if (error) {
             console.error(error);
             return { data: null, error };

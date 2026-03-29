@@ -1,34 +1,30 @@
 "use client";
 import { obtenerUrlLogoBanda } from "@/lib/services/bandasServices";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import BotonTresPuntos from "./Botones/BotonTresPuntos";
+import { bandaInterface } from "@/interface/interfaces";
+import FormularioEditarbanda from "@/components/Formularios/FormularioBandas/FormularioEditarbanda";
 type Props = {
-  nombre: string;
-  categoria: string;
-  grupo: "Grupo 1" | "Grupo 2";
-  subcGrupo: "1" | "2";
-  path_image_banda: string;
+ banda:bandaInterface
   entradaAnimacion?: number;
 };
 
 export default function BandasCardCompnent({
-  nombre,
-  categoria,
-  grupo,
-  subcGrupo,
-  path_image_banda,
+  banda,
   entradaAnimacion,
 }: Props) {
   const [imagen, setImagen] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+    const [openFormularioEditar, setOpenFormularioEditar] = useState(false);
+
 
   React.useEffect(() => {
-    if (path_image_banda && path_image_banda.trim() !== "") {
+    if (banda.path_image_banda &&  banda.path_image_banda.trim() !== "") {
       setIsLoading(true);
       setError(null);
-      obtenerUrlLogoBanda(path_image_banda)
+      obtenerUrlLogoBanda(banda.path_image_banda)
         .then((url) => {
           if (url) {
             setImagen(url);
@@ -47,8 +43,17 @@ export default function BandasCardCompnent({
       setImagen(null);
       setError(null);
     }
-  }, [path_image_banda]);
+  }, [banda.path_image_banda]);
   return (
+    <>
+       <FormularioEditarbanda
+        open={openFormularioEditar}
+        onClose={() => setOpenFormularioEditar(false)}
+        bandaAEditar={banda}
+      />
+      
+    
+ 
     <div
       className="flex flex-col w-full h-90 bg-white shadow animate-zoom-in"
       style={{ animationDelay: `${(entradaAnimacion || 0) * 0.2}s` }}
@@ -59,7 +64,7 @@ export default function BandasCardCompnent({
         ) : imagen ? (
           <Image
             src={imagen}
-            alt={nombre}
+            alt={banda.nombre_banda}
             width={100}
             height={100}
             className="object-cover w-full h-full"
@@ -76,14 +81,15 @@ export default function BandasCardCompnent({
       </div>
       <div className="p-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{nombre}</h2>
-          <BotonTresPuntos />
+          <h2 className="text-lg font-semibold">{banda.nombre_banda}</h2>
+          <BotonTresPuntos
+           onEdit={() => setOpenFormularioEditar(true)}
+           />
         </div>
-        <p className="text-gray-600">{categoria}</p>
-        <p className="text-sm text-gray-500">
-          {grupo} - {subcGrupo}
-        </p>
+        <p className="text-gray-600">{banda.categoria_banda}</p>
+     
       </div>
     </div>
+       </>
   );
 }

@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { bandaInterface } from "@/interface/interfaces";
 import FormularioAgregarbanda from "@/components/Formularios/FormularioBandas/FormularioAgregarbanda";
 import { useAuth } from "@/hook/UseAuthHook";
+import FormularioEditarbanda from "@/components/Formularios/FormularioBandas/FormularioEditarbanda";
 
 export default function Page() {
   const [bandasList, setBandasList] = useState<bandaInterface[]>([]);
   const [openFormularioAgregar, setOpenFormularioAgregar] = useState(false);
+
 
   useEffect(() => {
     const fetchBandas = async () => {
@@ -27,6 +29,8 @@ export default function Page() {
         open={openFormularioAgregar}
         onClose={() => setOpenFormularioAgregar(false)}
       />
+   
+      
       <div className="w-full py-10 px-24 flex flex-col gap-4 ">
         <div className="flex justify-between">
           <div>
@@ -45,11 +49,7 @@ export default function Page() {
           {bandasList.map((banda, index) => (
             <BandasCardCompnent
               key={banda.id_banda}
-              nombre={banda.nombre_banda}
-              categoria={banda.categoria_banda}
-              grupo={"Grupo 1"}
-              subcGrupo={"1"}
-              path_image_banda={banda.path_image_banda}
+              banda={banda}
               entradaAnimacion={index}
             />
           ))}
