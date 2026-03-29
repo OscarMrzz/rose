@@ -1,10 +1,12 @@
 "use client";
-import { obtenerUrlLogoBanda } from "@/lib/services/bandasServices";
+import { deleteBanda, obtenerUrlLogoBanda } from "@/lib/services/bandasServices";
 import Image from "next/image";
 import React, { useState } from "react";
 import BotonTresPuntos from "./Botones/BotonTresPuntos";
 import { bandaInterface } from "@/interface/interfaces";
 import FormularioEditarbanda from "@/components/Formularios/FormularioBandas/FormularioEditarbanda";
+import ApprovateMessage from "./Message/ApprovateMessage";
+import ConfirmDeleteModal from "./Message/ConfirmDeleteModal";
 type Props = {
  banda:bandaInterface
   entradaAnimacion?: number;
@@ -17,7 +19,8 @@ export default function BandasCardCompnent({
   const [imagen, setImagen] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-    const [openFormularioEditar, setOpenFormularioEditar] = useState(false);
+  const [openFormularioEditar, setOpenFormularioEditar] = useState(false);
+  const [openConfirmarEliminar, setOpenConfirmarEliminar] = useState(false);
 
 
   React.useEffect(() => {
@@ -44,12 +47,31 @@ export default function BandasCardCompnent({
       setError(null);
     }
   }, [banda.path_image_banda]);
+
+
+  const abrirDialogConfirmarEliminar = () => {
+    setOpenConfirmarEliminar(true);
+  };
+
+  const EliminarBanda = () => {
+    deleteBanda(banda.id_banda);
+ 
+  };
+
   return (
     <>
        <FormularioEditarbanda
         open={openFormularioEditar}
         onClose={() => setOpenFormularioEditar(false)}
         bandaAEditar={banda}
+      />
+
+      <ConfirmDeleteModal
+        open={openConfirmarEliminar}
+        onClose={() => setOpenConfirmarEliminar(false)}
+        onConfirm={EliminarBanda}
+        nombreElemento={banda.nombre_banda}
+        titulo="Eliminar Banda"
       />
       
     
@@ -84,6 +106,7 @@ export default function BandasCardCompnent({
           <h2 className="text-lg font-semibold">{banda.nombre_banda}</h2>
           <BotonTresPuntos
            onEdit={() => setOpenFormularioEditar(true)}
+           onDelete={abrirDialogConfirmarEliminar}
            />
         </div>
         <p className="text-gray-600">{banda.categoria_banda}</p>
