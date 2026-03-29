@@ -49,9 +49,9 @@ export default function FormularioAgregarbanda({ open, onClose }: Props) {
   const handleSubmit = async (evento: React.FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
     let URLLogo = "";
-     if (selectedFile && formData.nombre_banda){
-      URLLogo = `${formData.nombre_banda?.replace(/\s+/g, "_")}_logo`
-     }
+    if (selectedFile && formData.nombre_banda) {
+      URLLogo = `${formData.nombre_banda?.replace(/\s+/g, "_")}_logo`;
+    }
 
     const nuevaBanda: Omit<bandaInterface, "id_banda" | "created_at_banda"> = {
       nombre_banda: formData.nombre_banda || "",
@@ -63,10 +63,7 @@ export default function FormularioAgregarbanda({ open, onClose }: Props) {
       await createBanda(nuevaBanda as bandaInterface);
       // Si hay un archivo seleccionado, subirlo
       if (selectedFile) {
-        const resultadoLogo = await subirLogoBanda(
-          selectedFile,
-          URLLogo,
-        );
+        const resultadoLogo = await subirLogoBanda(selectedFile, URLLogo);
         // Si la subida falla, solo loguea el error pero no detengas el proceso
         if (!resultadoLogo) {
           console.error("Error al subir el logo de la banda.");
@@ -101,10 +98,11 @@ export default function FormularioAgregarbanda({ open, onClose }: Props) {
             <select
               name="categoria_banda"
               id="categoria_banda"
+              value={formData.categoria_banda || ""}
               className="bg-slate-200 p-2 rounded"
               onChange={handleInputChange}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Seleccione una categoria
               </option>
               <option value="PREMIER">Premier</option>

@@ -1,3 +1,5 @@
+import { UserIdentity } from "@supabase/supabase-js";
+
 
 
 export interface bandaInterface {

@@ -1,4 +1,5 @@
 import { ClienteBrowserSupabase } from "@/lib/supabase";
+import { User } from "@supabase/supabase-js";
 
 
 
@@ -19,7 +20,13 @@ export async function register(email: string, password: string) {
 
 export const getUserAuth = async () => {
     const { data, error } = await ClienteBrowserSupabase.auth.getUser();
-    return { data, error };
+
+    try {
+        if(!data) return null
+        return data.user as User | null;
+    } catch (error) {
+        return null;
+    }
 }
 
 export async function logout() {

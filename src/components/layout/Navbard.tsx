@@ -2,8 +2,12 @@
 import React from "react";
 import BotonSengInSengUp from "../Auth/BotonSengInSengUp";
 import FormularioAuth from "../Auth/FormularioAuth";
+import { useAuth } from "@/hook/UseAuthHook";
 
 export default function Navbard() {
+  
+  const { userAuth, isLoadingAuth, isErrorAuth, errorAuth, isAuthenticated } =
+    useAuth();
 
     const [openFormularioAuth, setOpenFormularioAuth] = React.useState(false);
   return (
@@ -17,7 +21,7 @@ export default function Navbard() {
       <div></div>
 
       <div>
-        <BotonSengInSengUp onClick={() => setOpenFormularioAuth(true)} haySesion={false} />
+        <BotonSengInSengUp onClick={() => setOpenFormularioAuth(true)} haySesion={isAuthenticated} />
       </div>
     </div>
     </>
