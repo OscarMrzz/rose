@@ -30,6 +30,8 @@ export default function FormularioAgregarbanda({
     categoria_banda: "",
     path_image_banda: "",
     posicion_tabla: 0,
+    grupo_banda: "",
+    subgrupo_banda: "",
   });
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -74,6 +76,8 @@ export default function FormularioAgregarbanda({
       categoria_banda: formData.categoria_banda || "",
       path_image_banda: URLLogo,
       posicion_tabla: formData.posicion_tabla || 0,
+      grupo_banda: formData.grupo_banda || "",
+      subgrupo_banda: formData.subgrupo_banda || "",
     };
 
     try {
@@ -136,6 +140,28 @@ export default function FormularioAgregarbanda({
               name="posicion_tabla"
               placeholder="Posicion en tabla"
               min="0"
+              onChange={handleInputChange}
+              className="bg-slate-100 p-2 rounded"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="grupo_banda">Grupo</label>
+            <input
+              type="text"
+              id="grupo_banda"
+              name="grupo_banda"
+              placeholder="Grupo de la banda"
+              onChange={handleInputChange}
+              className="bg-slate-100 p-2 rounded"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="subgrupo_banda">Subgrupo</label>
+            <input
+              type="text"
+              id="subgrupo_banda"
+              name="subgrupo_banda"
+              placeholder="Subgrupo de la banda"
               onChange={handleInputChange}
               className="bg-slate-100 p-2 rounded"
             />

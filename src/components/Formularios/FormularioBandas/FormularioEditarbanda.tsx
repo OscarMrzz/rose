@@ -121,6 +121,8 @@ export default function FormularioEditarbanda({
       categoria_banda: formData.categoria_banda || "",
       path_image_banda: URLLogo,
       posicion_tabla: formData.posicion_tabla || 0,
+      grupo_banda: bandaAEditar.grupo_banda || "",
+      subgrupo_banda: bandaAEditar.subgrupo_banda || "",
     };
 
     try {
