@@ -31,22 +31,22 @@ export default function FormularioAuth({ open, onClose }: Props) {
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("iniciar sesion");
+  
     const email = event.currentTarget.email.value;
     const password = event.currentTarget.password.value;
 
     try {
-      console.log("Intentando iniciar sesion con:", email, password);
+     
       const resultado = await login(email, password);
 
       if (resultado.error) {
         setIsError(true);
-        console.error("Error de autenticación:", resultado.error);
+      
         return;
       }
 
       if (resultado.data) {
-        console.log("Login exitoso:", resultado.data);
+        
         onClose();
       } else {
         setIsError(true);
@@ -58,13 +58,13 @@ export default function FormularioAuth({ open, onClose }: Props) {
   };
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("registrarse");
+    
     const email = event.currentTarget.email.value;
     const password = event.currentTarget.password.value;
 
     try {
       const usuario = await register(email, password);
-      console.log("Usuario registrado:", usuario);
+  
       onClose();
     } catch (error) {
       console.error("Error al registrar usuario:", error);
@@ -73,7 +73,7 @@ export default function FormularioAuth({ open, onClose }: Props) {
 
   const quiereregistrarse = () => {
     setSeVaARegistrar(true);
-    console.log("quiero registrarme");
+
   };
 
   const siguientePaso = () => {

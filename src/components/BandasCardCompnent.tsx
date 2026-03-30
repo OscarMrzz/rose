@@ -1,5 +1,8 @@
 "use client";
-import { deleteBanda, obtenerUrlLogoBanda } from "@/lib/services/bandasServices";
+import {
+  deleteBanda,
+  obtenerUrlLogoBanda,
+} from "@/lib/services/bandasServices";
 import Image from "next/image";
 import React, { useState } from "react";
 import BotonTresPuntos from "./Botones/BotonTresPuntos";
@@ -8,13 +11,15 @@ import FormularioEditarbanda from "@/components/Formularios/FormularioBandas/For
 import ApprovateMessage from "./Message/ApprovateMessage";
 import ConfirmDeleteModal from "./Message/ConfirmDeleteModal";
 type Props = {
- banda:bandaInterface
+  banda: bandaInterface;
   entradaAnimacion?: number;
+  refrescar?: () => void;
 };
 
 export default function BandasCardCompnent({
   banda,
   entradaAnimacion,
+  refrescar,
 }: Props) {
   const [imagen, setImagen] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -22,9 +27,8 @@ export default function BandasCardCompnent({
   const [openFormularioEditar, setOpenFormularioEditar] = useState(false);
   const [openConfirmarEliminar, setOpenConfirmarEliminar] = useState(false);
 
-
   React.useEffect(() => {
-    if (banda.path_image_banda &&  banda.path_image_banda.trim() !== "") {
+    if (banda.path_image_banda && banda.path_image_banda.trim() !== "") {
       setIsLoading(true);
       setError(null);
       obtenerUrlLogoBanda(banda.path_image_banda)
@@ -48,22 +52,22 @@ export default function BandasCardCompnent({
     }
   }, [banda.path_image_banda]);
 
-
   const abrirDialogConfirmarEliminar = () => {
     setOpenConfirmarEliminar(true);
   };
 
-  const EliminarBanda = () => {
-    deleteBanda(banda.id_banda);
- 
+  const EliminarBanda = async () => {
+    await deleteBanda(banda.id_banda);
+    refrescar?.();
   };
 
   return (
     <>
-       <FormularioEditarbanda
+      <FormularioEditarbanda
         open={openFormularioEditar}
         onClose={() => setOpenFormularioEditar(false)}
         bandaAEditar={banda}
+        refrescar={refrescar}
       />
 
       <ConfirmDeleteModal
@@ -73,46 +77,58 @@ export default function BandasCardCompnent({
         nombreElemento={banda.nombre_banda}
         titulo="Eliminar Banda"
       />
-      
-    
- 
-    <div
-      className="flex flex-col w-full h-90 bg-white shadow animate-zoom-in"
-      style={{ animationDelay: `${(entradaAnimacion || 0) * 0.2}s` }}
-    >
-      <div className="bg-slate-300 h-56 flex items-center justify-center">
-        {isLoading ? (
-          <div className="text-gray-500">Cargando imagen...</div>
-        ) : imagen ? (
-          <Image
-            src={imagen}
-            alt={banda.nombre_banda}
-            width={100}
-            height={100}
-            className="object-cover w-full h-full"
-          />
-        ) : error ? (
-          <div className="text-gray-500 text-center p-2">
-            <div className="text-sm">Sin imagen</div>
-          </div>
-        ) : (
-          <div className="text-gray-500 text-center p-2">
-            <div className="text-sm">Sin imagen</div>
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">{banda.nombre_banda}</h2>
-          <BotonTresPuntos
-           onEdit={() => setOpenFormularioEditar(true)}
-           onDelete={abrirDialogConfirmarEliminar}
-           />
+
+      <div
+        className="flex flex-col w-full h-90 bg-white shadow animate-zoom-in"
+        style={{ animationDelay: `${(entradaAnimacion || 0) * 0.2}s` }}
+      >
+        <div className="bg-slate-300 h-56 flex items-center justify-center">
+          {isLoading ? (
+            <div className="text-gray-500">Cargando imagen...</div>
+          ) : imagen ? (
+            <Image
+              src={imagen}
+              alt={banda.nombre_banda}
+              width={100}
+              height={100}
+              className="object-cover w-full h-full"
+            />
+          ) : error ? (
+            <div className="text-gray-500 text-center p-2">
+              <div className="text-sm">Sin imagen</div>
+            </div>
+          ) : (
+            <div className="text-gray-500 text-center p-2">
+              <div className="text-sm">Sin imagen</div>
+            </div>
+          )}
         </div>
-        <p className="text-gray-600">{banda.categoria_banda}</p>
-     
+        <div className="p-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">{banda.nombre_banda}</h2>
+            <BotonTresPuntos
+              onEdit={() => setOpenFormularioEditar(true)}
+              onDelete={abrirDialogConfirmarEliminar}
+            />
+          </div>
+          <p className="text-gray-600">{banda.categoria_banda}</p>
+          {banda.posicion_tabla > 0 ? (
+            <p className="text-gray-600">
+              <span className="font-semibold">Posición: </span>
+              <span className="text-emerald-700 bg-emerald-300 px-6 rounded-full">
+                {banda.posicion_tabla}
+              </span>
+            </p>
+          ) : (
+            <p className="text-gray-600">
+              <span className="font-semibold">Posición: </span>
+              <span className="text-amber-700 bg-amber-300 px-6 rounded-full">
+                No asignada
+              </span>
+            </p>
+          )}
+        </div>
       </div>
-    </div>
-       </>
+    </>
   );
 }

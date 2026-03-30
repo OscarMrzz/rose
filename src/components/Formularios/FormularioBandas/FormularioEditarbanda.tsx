@@ -1,6 +1,5 @@
 import Modal from "@/components/modal/Modal";
 import {
-
   obtenerUrlLogoBanda,
   updateBanda,
   editarLogoBanda,
@@ -13,17 +12,31 @@ type Props = {
   open: boolean;
   onClose: () => void;
   bandaAEditar: bandaInterface;
+  refrescar?: () => void;
 };
+/* 
+    id_banda: string;
+    created_at_banda: string;
+    nombre_banda: string;
+    categoria_banda: string;
+    path_image_banda: string;
+    grupo_banda: string;
+    subgrupo_banda: string;
+    posicion_tabla: number;
+
+*/
 
 export default function FormularioEditarbanda({
   open,
   onClose,
   bandaAEditar,
+  refrescar,
 }: Props) {
   const [formData, setFormData] = useState<Partial<bandaInterface>>({
     nombre_banda: bandaAEditar.nombre_banda,
     categoria_banda: bandaAEditar.categoria_banda,
     path_image_banda: bandaAEditar.path_image_banda,
+    posicion_tabla: bandaAEditar.posicion_tabla,
   });
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -107,6 +120,7 @@ export default function FormularioEditarbanda({
       nombre_banda: formData.nombre_banda || "",
       categoria_banda: formData.categoria_banda || "",
       path_image_banda: URLLogo,
+      posicion_tabla: formData.posicion_tabla || 0,
     };
 
     try {
@@ -120,6 +134,7 @@ export default function FormularioEditarbanda({
         }
       }
       onClose();
+      refrescar?.();
     } catch (error) {
       console.error("Error al editar la banda:", error);
     }
@@ -158,6 +173,18 @@ export default function FormularioEditarbanda({
               <option value="A">A</option>
               <option value="B">B</option>
             </select>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="posicion_tabla">Posicion en tabla</label>
+            <input
+              type="number"
+              id="posicion_tabla"
+              name="posicion_tabla"
+              placeholder="Posicion en tabla"
+              min="0"
+              onChange={handleInputChange}
+              className="bg-slate-100 p-2 rounded"
+            />
           </div>
           <div className="flex flex-col">
             <label className="text-gray-200 mb-1" htmlFor="path_image_banda">

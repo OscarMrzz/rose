@@ -4,11 +4,16 @@ import { UserIdentity } from "@supabase/supabase-js";
 
 export interface bandaInterface {
     id_banda: string;
+    created_at_banda: string;
     nombre_banda: string;
     categoria_banda: string;
     path_image_banda: string;
-    created_at_banda: string;
+    posicion_tabla: number;
+    grupo_banda: string;
+    subgrupo_banda: string;
 }
+
+
 export interface tablaInterface {
     id_posicion: string;
     categoria_posicion: string;

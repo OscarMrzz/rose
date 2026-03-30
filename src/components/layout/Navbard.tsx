@@ -6,7 +6,7 @@ import { useAuth } from "@/hook/UseAuthHook";
 
 export default function Navbard() {
   
-  const { userAuth, isLoadingAuth, isErrorAuth, errorAuth, isAuthenticated } =
+  const {  isAuthenticated } =
     useAuth();
 
     const [openFormularioAuth, setOpenFormularioAuth] = React.useState(false);
@@ -15,7 +15,7 @@ export default function Navbard() {
     <FormularioAuth open={openFormularioAuth} onClose={() => setOpenFormularioAuth(false)} />
     
  
-    <div className="flex w-full h-24 bg-slate-300 shadow border-b border-slate-100 justify-between items-center px-4">
+    <div className="flex w-full h-24 shadow border-b border-slate-100 justify-between items-center px-4">
       <div></div>
 
       <div></div>

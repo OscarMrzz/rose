@@ -148,3 +148,24 @@ export async function editarLogoBanda(file: File, nombreArchivo: string): Promis
     return data.path;
 }
 
+export async function updateGruposBanda(id: string, grupo: string, subgrupo: string) {
+    try {
+        const { data, error } = await ClienteBrowserSupabase
+            .from('bandas')
+            .update({
+                grupo_banda: grupo,
+                subgrupo_banda: subgrupo
+            })
+            .eq('id_banda', id);
+
+        if (error) {
+            console.error(error);
+            return { data: null, error };
+        }
+        return { data, error: null };
+    } catch (error) {
+        console.error(error);
+        return { data: null, error };
+    }
+}
+

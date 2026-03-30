@@ -8,7 +8,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col w-48 h-full border-r border-slate-100 bg-slate-300 pt-24">
+    <div className="flex flex-col w-48      pt-24">
       <Link
         className={`p-2 w-full h-12 hover:bg-slate-400 transition-colors cursor-pointer duration-300 ${pathname === "/bandas" ? "bg-slate-500 text-white" : ""}`}
         href="/bandas"
@@ -23,7 +23,7 @@ export default function Sidebar() {
       </Link>
       <Link
         className={`p-2 w-full h-12 hover:bg-slate-400 transition-colors cursor-pointer duration-300 ${pathname === "/distribucion" ? "bg-slate-500 text-white" : ""}`}
-        href="/distribucion"
+        href="/distribuaciones"
       >
         Distribucion
       </Link>
