@@ -182,7 +182,7 @@ export default function FormularioAuth({ open, onClose }: Props) {
                       Anterior
                     </button>
                     <button
-                      className="bg-orange-500 text-white px-4 py-2 rounded"
+                      className="bg-sky-800 text-white px-4 py-2 rounded"
                       type="submit"
                     >
                       Registrarse
@@ -225,17 +225,18 @@ export default function FormularioAuth({ open, onClose }: Props) {
                 />
               </div>
               <button
-                className="bg-orange-600 rounded p-2 text-white"
+                className="bg-sky-700 rounded p-2 text-white"
                 type="submit"
               >
                 Iniciar sesion
               </button>
             </form>
-            <span>
+            <span className="text-slate-300">
               No tienes cuenta?{" "}
               <button
-                className="text-blue-400 cursor-pointer font-light"
+                className="text-blue-400/50 cursor-pointer font-light"
                 onClick={quiereregistrarse}
+                disabled
               >
                 Registrate
               </button>

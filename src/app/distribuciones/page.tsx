@@ -2,6 +2,7 @@
 
 import BandaMiniCard from "@/components/BandaMiniCard";
 import GrupoEventos from "@/components/GrupoEventos";
+import ApprovateMessage from "@/components/Message/ApprovateMessage";
 import { bandaInterface } from "@/interface/interfaces";
 import { getAllBandas } from "@/lib/services/bandasServices";
 import {} from "@/lib/services/data";
@@ -27,13 +28,17 @@ export default function Page() {
   const [bandas1A1Grupo1, setBandas1A1Grupo1] = useState<bandaInterface[]>([]);
   const [bandas1A1Grupo2, setBandas1A1Grupo2] = useState<bandaInterface[]>([]);
   const [isMostarTodo, setIsMostarTodo] = useState(false);
+  const [openMessage, setOpenMessage] = useState(false);
 
-  const [cantidadEventos, setCantidadEventos] = useState<6 | 8 | 12 | 14 | 18 | 20 | 24>(6);
+  const [cantidadEventos, setCantidadEventos] = useState<
+    6 | 8 | 12 | 14 | 18 | 20 | 24
+  >(6);
 
   const iniciarDistribucion = async () => {
     const bandas = await getAllBandas();
 
-    distribuir(tipoDistribucion, cantidadEventos, 2, bandas);
+    distribuir(tipoDistribucion, 2, 2, bandas);
+    setOpenMessage(true);
   };
 
   const mostrarTodo = async () => {
@@ -215,33 +220,43 @@ export default function Page() {
   };
 
   return (
-    <div className="w-full h-full pb-60 pr-24">
+    <>
+    
+    <ApprovateMessage open={openMessage} onClose={() => setOpenMessage(false)} />
+    <div className="w-full h-full pb-60 px-24">
       <div className="w-full h-24 border-b border-slate-300 flex items-center gap-4 px-4">
+          <button
+          onClick={iniciarDistribucion}
+          className="bg-sky-600 h-12 rounded-xl px-4 w-56 text-white"
+        >
+          Generar
+        </button>
         <select
           value={tipoDistribucion}
           onChange={(e) =>
             setTipoDistribucion(e.target.value as "tabla" | "aleatorio")
           }
-          className="bg-blue-300 h-12 rounded-xl px-2"
+          className="bg-slate-300 h-12 rounded-xl px-2"
         >
-          <option value="tabla" disabled>Distribucion</option>
+          <option value="tabla" disabled>
+            Distribucion
+          </option>
           <option value="tabla">Distribucion por tabla</option>
           <option value="aleatorio">Distribucion al azar</option>
         </select>
-        <button
-          onClick={iniciarDistribucion}
-          className="bg-blue-300 h-12 rounded-xl px-4"
-        >
-          Generar
-        </button>
+      
         <select
           value={cantidadEventos}
           onChange={(e) =>
-            setCantidadEventos(parseInt(e.target.value) as 6 | 8 | 12 | 14 | 18 | 20 | 24)
+            setCantidadEventos(
+              parseInt(e.target.value) as 6 | 8 | 12 | 14 | 18 | 20 | 24,
+            )
           }
-          className="bg-blue-300 h-12 rounded-xl px-2 w-36"
+          className="bg-slate-300 h-12 rounded-xl px-2 w-36"
         >
-          <option value={6} disabled>Cant. eventos</option>
+          <option value={6} disabled>
+            Cant. eventos
+          </option>
           <option value={6}>6</option>
           <option value={8}>8</option>
           <option value={12}>12</option>
@@ -250,20 +265,18 @@ export default function Page() {
           <option value={20}>20</option>
         </select>
 
-        
         <button
           onClick={mostrarTodo}
-          className="bg-blue-300 h-12 rounded-xl px-4"
+          className="bg-slate-300 h-12 rounded-xl px-4"
         >
           Mostrar Todo
         </button>
         <button
           onClick={mostrar1a1}
-          className="bg-blue-300 h-12 rounded-xl px-4"
+          className="bg-slate-300 h-12 rounded-xl px-4"
         >
           Mostrar 1 a 1
         </button>
-    
       </div>
       {!isMostarTodo ? (
         <section className="grid grid-cols-3 w-full h-full justify-between">
@@ -346,12 +359,14 @@ export default function Page() {
         </section>
       )}
       <section>
-        {
-          bandasGrupo1.length > 0 && (
-            <GrupoEventos numeroEventos={cantidadEventos } bandasList={[...bandasGrupo1, ...bandasGrupo2]} />
-          )
-        }
+        {bandasGrupo1.length > 0 && (
+          <GrupoEventos
+            numeroEventos={cantidadEventos}
+            bandasList={[...bandasGrupo1, ...bandasGrupo2]}
+          />
+        )}
       </section>
     </div>
+    </>
   );
 }

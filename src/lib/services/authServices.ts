@@ -22,7 +22,7 @@ export const getUserAuth = async () => {
     const { data, error } = await ClienteBrowserSupabase.auth.getUser();
 
     try {
-        if(!data) return null
+        if (!data) return null
         return data.user as User | null;
     } catch (error) {
         return null;
@@ -37,6 +37,14 @@ export async function logout() {
 export async function isSession() {
     const { data, error } = await ClienteBrowserSupabase.auth.getSession();
     return { data, error };
+}
+
+export async function cerrarSesion() {
+    const { error } = await logout();
+    if (!error) {
+        window.location.href = '/';
+    }
+    return { error };
 }
 
 export async function getUserProfile() {

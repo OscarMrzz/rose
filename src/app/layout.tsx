@@ -38,7 +38,7 @@ export default function RootLayout({
           <Navbard />
         </header>
         <div className="flex w-full h-full  ">
-          <Sidebar />
+        
           {children}
         </div>
         <footer></footer>
