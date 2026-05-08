@@ -1,6 +1,7 @@
 import { bandaInterface } from "@/interface/interfaces";
+import { eventosTypeClassName } from "@/lib/eventosTypography";
 import React, { useEffect } from "react";
-import BandaMiniCard from "./BandaMiniCard";
+import TarjetaBandaEvento from "./TarjetaBandaEvento";
 
 type Props = {
   numeroEventos: 6 | 8 | 12 | 14 | 18 | 20 | 24;
@@ -194,27 +195,67 @@ export default function GrupoEventos({ numeroEventos, bandasList }: Props) {
     };
 
     updateEventos();
-  }, [bandasList, setEventos]);
+  }, [bandasList, numeroEventos]);
 
   return (
-    <>
-      <div className="flex flex-col gap-24 mt-4 sm:mt-8">
-        {eventos.map((evento) => (
-          <div
-            className="flex w-full justify-center flex-col gap-6"
-            key={evento.nombre}
-          >
-            <h2 className="w-full flex justify-center text-6xl font-black text-slate-700">
-              {evento.nombre}
-            </h2>
-            <div className="grid grid-cols-6 gap-4">
-              {evento.bandas.map((banda) => (
-                <BandaMiniCard key={banda.id_banda} banda={banda} />
-              ))}
+    <div
+      className={`${eventosTypeClassName} flex flex-col gap-16 sm:gap-20 lg:gap-24`}
+    >
+      {eventos.map((evento, eventoIdx) => (
+        <section
+          className="relative scroll-mt-24"
+          key={evento.nombre}
+          aria-labelledby={`titulo-${evento.nombre.replace(/\s+/g, "-")}`}
+        >
+          <div className="mb-6 flex flex-col items-center gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+            <div className="flex w-full flex-col items-center text-center sm:items-start sm:text-left">
+              <span
+                className="text-[0.62rem] font-semibold uppercase tracking-[0.36em] text-amber-900/80"
+                style={{ fontFamily: "var(--font-lexend-ui)" }}
+              >
+                Bloque {String(eventoIdx + 1).padStart(2, "0")}
+              </span>
+              <div className="mt-2 flex items-center gap-4">
+                <span
+                  className="hidden h-px w-10 bg-linear-to-r from-transparent to-stone-400/80 sm:block"
+                  aria-hidden
+                />
+                <h2
+                  id={`titulo-${evento.nombre.replace(/\s+/g, "-")}`}
+                  className="text-balance uppercase leading-none tracking-[0.04em] text-stone-900"
+                  style={{
+                    fontFamily: "var(--font-anton-display), sans-serif",
+                    fontSize: "clamp(1.85rem, 3vw + 1rem, 3.2rem)",
+                  }}
+                >
+                  {evento.nombre}
+                </h2>
+              </div>
+              <p
+                className="mt-2 max-w-md text-[0.65rem] font-medium uppercase tracking-[0.26em] text-stone-500"
+                style={{ fontFamily: "var(--font-lexend-ui)" }}
+              >
+                {evento.bandas.length}{" "}
+                {evento.bandas.length === 1 ? "banda" : "bandas"}
+              </p>
             </div>
+            <div
+              className="h-[2px] w-full max-w-xs rounded-full bg-linear-to-r from-amber-600/55 via-stone-300/70 to-transparent sm:max-w-none sm:flex-1"
+              aria-hidden
+            />
           </div>
-        ))}
-      </div>
-    </>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {evento.bandas.map((banda, i) => (
+              <TarjetaBandaEvento
+                key={`${evento.nombre}-${banda.id_banda}-${i}`}
+                banda={banda}
+                indiceVisual={eventoIdx * 12 + i}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }

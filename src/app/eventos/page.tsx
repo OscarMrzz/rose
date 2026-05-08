@@ -2,6 +2,7 @@
 
 import GrupoEventos from "@/components/GrupoEventos";
 import { bandaInterface } from "@/interface/interfaces";
+import { eventosTypeClassName } from "@/lib/eventosTypography";
 import { getAllBandas } from "@/lib/services/bandasServices";
 import { useConfiguracionStore } from "@/stores/configuracionStore";
 import React, { useCallback, useEffect, useState } from "react";
@@ -36,10 +37,12 @@ function ordenarGruposDesdeBandas(
   const sortByCategoria = (a: bandaInterface, b: bandaInterface) => {
     const categoryOrder = Object.keys(categorias).map((key) => parseInt(key));
     const aCategoryIndex = categoryOrder.findIndex(
-      (cat) => categorias[cat as keyof typeof categorias] === a.categoria_banda,
+      (cat) =>
+        categorias[cat as keyof typeof categorias] === a.categoria_banda,
     );
     const bCategoryIndex = categoryOrder.findIndex(
-      (cat) => categorias[cat as keyof typeof categorias] === b.categoria_banda,
+      (cat) =>
+        categorias[cat as keyof typeof categorias] === b.categoria_banda,
     );
     return aCategoryIndex - bCategoryIndex;
   };
@@ -48,6 +51,23 @@ function ordenarGruposDesdeBandas(
     grupo1: [...grupo1OrdenadoPorPosicion].sort(sortByCategoria),
     grupo2: [...grupo2OrdenadoPorPosicion].sort(sortByCategoria),
   };
+}
+
+function SkeletonEventosPlaceholder() {
+  return (
+    <div
+      className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+      aria-hidden
+    >
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div
+          key={i}
+          className="aspect-[3/4] animate-pulse rounded-lg border border-zinc-800/70 bg-linear-to-br from-zinc-800/90 via-zinc-950/80 to-black shadow-[inset_0_0_0_1px_rgba(251,191,36,0.08)]"
+          style={{ animationDelay: `${i * 40}ms` }}
+        />
+      ))}
+    </div>
+  );
 }
 
 export default function Page() {
@@ -81,46 +101,104 @@ export default function Page() {
     bandasList.some((b) => b.grupo_banda === "1" || b.grupo_banda === "2");
 
   return (
-    <div className="relative mx-auto w-full max-w-[1600px] px-4 pb-28 pt-2 sm:px-6 lg:px-10 xl:px-16 2xl:px-24">
+    <div
+      className={`${eventosTypeClassName} relative mx-auto w-full max-w-[1600px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-10 xl:px-16 2xl:px-24`}
+    >
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(14,165,233,0.11),transparent_55%),radial-gradient(ellipse_55%_45%_at_100%_55%,rgba(71,85,105,0.07),transparent_50%),linear-gradient(180deg,#e2e8f0_0%,#f1f5f9_40%,#e2e8f0_100%)]"
+        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_90%_55%_at_50%_-8%,rgba(217,119,6,0.09),transparent_52%),radial-gradient(ellipse_50%_40%_at_0%_60%,rgba(87,83,78,0.06),transparent_48%),linear-gradient(180deg,#ebe8e3_0%,#f7f5f2_42%,#e7e5e2_100%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10 opacity-[0.35] mix-blend-multiply bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E')]"
       />
 
-      <header className="sticky top-2 z-10 mb-8 sm:top-3">
-        <div className="rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm shadow-slate-900/5 backdrop-blur-md sm:p-5">
-          <div className="border-b border-slate-200/70 pb-3">
-            <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700/90">
-              ROSE · Eventos
-            </p>
-            <h1 className="font-sans text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
-              Calendario según distribución actual
-            </h1>
-            <p className="mt-2 text-sm text-slate-600">
-              Los eventos se generan con la cantidad configurada y las bandas ya
-              asignadas en Distribuciones.
-            </p>
+      <header className="relative z-[1] mb-10 sm:mb-14">
+        <div className="overflow-hidden rounded-3xl border border-stone-200/70 bg-linear-to-br from-[#fcfbf9]/95 via-stone-50/90 to-amber-50/25 p-5 shadow-[0_28px_60px_-40px_rgba(28,25,23,0.65),inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-md sm:p-7 lg:p-8">
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p
+                className="text-[0.62rem] font-semibold uppercase tracking-[0.34em] text-amber-800/90"
+                style={{ fontFamily: "var(--font-lexend-ui)" }}
+              >
+                Rose — Eventos
+              </p>
+              <h1
+                className="mt-3 text-balance uppercase leading-[0.96] tracking-[0.02em] text-stone-900 sm:text-[2.35rem] md:text-[2.85rem]"
+                style={{
+                  fontFamily: "var(--font-anton-display), sans-serif",
+                }}
+              >
+                Calendario según distribución actual
+              </h1>
+              <p
+                className="mt-4 max-w-xl text-[0.96rem] font-normal leading-relaxed text-stone-600"
+                style={{ fontFamily: "var(--font-lexend-ui)" }}
+              >
+                Los eventos se generan con la cantidad configurada en Config y
+                las bandas ya asignadas en Distribuciones. Cada bloque muestra
+                quién forma parte del lineup.
+              </p>
+            </div>
+            <div
+              className="flex shrink-0 flex-wrap gap-3 text-[0.6rem] font-medium uppercase tracking-[0.22em] text-stone-500 lg:flex-col lg:items-end lg:text-right"
+              style={{ fontFamily: "var(--font-lexend-ui)" }}
+            >
+              <span className="rounded-full border border-stone-300/80 bg-white/55 px-3 py-1.5 text-stone-600 backdrop-blur-sm">
+                {cargando ? "…" : `${bandasList?.length ?? "—"} bandas`}
+              </span>
+              {!cargando && hayDistribucion && (
+                <span className="rounded-full border border-amber-200/70 bg-amber-50/50 px-3 py-1.5 text-amber-950/85">
+                  {cantidadEventos} fechas proyectadas
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
       {cargando && (
-        <p className="text-center font-mono text-sm text-slate-500">
-          Cargando eventos…
-        </p>
+        <section
+          aria-busy="true"
+          aria-label="Cargando calendario de eventos"
+          className="space-y-8"
+        >
+          <span className="sr-only">Cargando…</span>
+          <SkeletonEventosPlaceholder />
+        </section>
       )}
 
       {error && (
-        <p className="text-center text-sm text-red-600" role="alert">
-          {error}
-        </p>
+        <div
+          className="rounded-3xl border border-red-200/70 bg-linear-to-br from-red-50/95 to-white/80 p-6 text-center shadow-sm"
+          role="alert"
+        >
+          <p className="font-medium text-red-950">{error}</p>
+          <button
+            type="button"
+            onClick={() => void cargar()}
+            className="mt-5 inline-flex rounded-full border border-red-900/15 bg-white px-5 py-2 text-sm font-medium text-red-900 transition-colors hover:bg-red-50"
+          >
+            Reintentar
+          </button>
+        </div>
       )}
 
       {!cargando && !error && bandasList != null && !hayDistribucion && (
-        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/90 p-6 text-center text-slate-700 shadow-sm">
-          <p className="font-medium">Aún no hay grupos para armar eventos.</p>
-          <p className="mt-2 text-sm text-slate-600">
-            Generá la distribución en la página Distribuciones y volvé acá.
+        <div className="relative overflow-hidden rounded-3xl border border-amber-200/60 bg-linear-to-br from-amber-50/95 via-orange-50/40 to-stone-100/90 p-8 text-center shadow-[0_22px_50px_-38px_rgba(120,53,15,0.45)] sm:p-10">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-linear-to-br from-amber-200/55 to-transparent blur-2xl"
+          />
+          <p
+            className="text-balance uppercase leading-tight tracking-[0.03em] text-stone-800 sm:text-xl"
+            style={{ fontFamily: "var(--font-anton-display), sans-serif" }}
+          >
+            Aún no hay grupos para armar eventos
+          </p>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-stone-600">
+            Generá la distribución en la página Distribuciones y volvé acá para
+            ver el calendario propuesto con las bandas.
           </p>
         </div>
       )}
