@@ -3,7 +3,6 @@
 import BandasSinDistribuirModal from "@/components/BandasSinDistribuirModal";
 import GrupoEventos from "@/components/GrupoEventos";
 import { bandaInterface } from "@/interface/interfaces";
-import { eventosTypeClassName } from "@/lib/eventosTypography";
 import { getAllBandas } from "@/lib/services/bandasServices";
 import { bandaSinGrupoOSubgrupo } from "@/lib/utils/Distirbuir";
 import { useConfiguracionStore } from "@/stores/configuracionStore";
@@ -64,7 +63,7 @@ function SkeletonEventosPlaceholder() {
       {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
-          className="aspect-[3/4] animate-pulse rounded-lg border border-zinc-800/70 bg-linear-to-br from-zinc-800/90 via-zinc-950/80 to-black shadow-[inset_0_0_0_1px_rgba(251,191,36,0.08)]"
+          className="aspect-3/4 animate-pulse rounded-lg border border-zinc-800/70 bg-linear-to-br from-zinc-800/90 via-zinc-950/80 to-black shadow-[inset_0_0_0_1px_rgba(251,191,36,0.08)]"
           style={{ animationDelay: `${i * 40}ms` }}
         />
       ))}
@@ -116,7 +115,7 @@ export default function Page() {
 
   return (
     <div
-      className={`  mx-auto w-full max-w-[1600px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-10 xl:px-16 2xl:px-24`}
+      className="mx-auto w-full max-w-[1600px] overflow-x-hidden px-3 pb-24 pt-3 sm:px-6 sm:pb-28 sm:pt-6 lg:px-10 xl:px-16 2xl:px-24"
     >
       <BandasSinDistribuirModal
         bandas={bandasSinDistribuir}
@@ -135,18 +134,18 @@ export default function Page() {
         className="pointer-events-none fixed inset-0 -z-10 opacity-[0.35] mix-blend-multiply bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E')]"
       />
 
-      <header className="relative z-[1] mb-10 sm:mb-14">
-        <div className="overflow-hidden rounded-3xl border border-stone-200/70   bg-white shadow-xl ,inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-md sm:p-7 lg:p-8">
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
+      <header className="relative z-1 mb-8 sm:mb-12 lg:mb-14">
+        <div className="overflow-hidden rounded-2xl border border-stone-200/70 bg-white p-5 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.08),0_8px_10px_-6px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-md sm:rounded-3xl sm:p-7 lg:p-8">
+          <div className="relative flex flex-col gap-5 sm:gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0 max-w-2xl">
               <p
-                className="text-[0.62rem] font-semibold uppercase tracking-[0.34em] text-amber-800/90"
+                className="text-[0.58rem] font-semibold uppercase tracking-[0.28em] text-amber-800/90 sm:text-[0.62rem] sm:tracking-[0.34em]"
                 style={{ fontFamily: "var(--font-lexend-ui)" }}
               >
                 Rose — Eventos
               </p>
               <h1
-                className="mt-3 text-balance uppercase leading-[0.96] tracking-[0.02em] text-stone-900 sm:text-[2.35rem] md:text-[2.85rem]"
+                className="mt-2 text-balance text-[clamp(1.35rem,5.2vw,1.95rem)] uppercase leading-[1.02] tracking-[0.02em] text-stone-900 sm:mt-3 sm:text-[2.35rem] sm:leading-[0.96] md:text-[2.85rem]"
                 style={{
                   fontFamily: "var(--font-anton-display), sans-serif",
                 }}
@@ -154,21 +153,21 @@ export default function Page() {
                 Calendario según distribución actual
               </h1>
               <p
-                className="mt-4 max-w-xl text-[0.96rem] font-normal leading-relaxed text-stone-600"
+                className="mt-3 max-w-xl text-[0.875rem] font-normal leading-relaxed text-stone-600 sm:mt-4 sm:text-[0.96rem]"
                 style={{ fontFamily: "var(--font-lexend-ui)" }}
               >
                 Las bandas se distribuyen sengun su grupo asignado
               </p>
             </div>
             <div
-              className="flex shrink-0 flex-wrap gap-3 text-[0.6rem] font-medium uppercase tracking-[0.22em] text-stone-500 lg:flex-col lg:items-end lg:text-right"
+              className="flex w-full shrink-0 flex-wrap items-stretch gap-2 sm:gap-3 lg:w-auto lg:flex-col lg:items-end lg:gap-3 lg:text-right"
               style={{ fontFamily: "var(--font-lexend-ui)" }}
             >
-              <span className="rounded-full border border-stone-300/80 bg-white/55 px-3 py-1.5 text-stone-600 backdrop-blur-sm">
+              <span className="inline-flex min-h-9 flex-1 items-center justify-center rounded-full border border-stone-300/80 bg-white/55 px-3 py-1.5 text-center text-[0.55rem] font-medium uppercase tracking-[0.18em] text-stone-600 backdrop-blur-sm sm:flex-initial sm:min-h-0 sm:justify-start sm:text-[0.6rem] sm:tracking-[0.22em]">
                 {cargando ? "…" : `${bandasTodas?.length ?? bandasList?.length ?? "—"} bandas`}
               </span>
               {!cargando && hayDistribucion && (
-                <span className="rounded-full border border-amber-200/70 bg-amber-50/50 px-3 py-1.5 text-amber-950/85">
+                <span className="inline-flex min-h-9 flex-1 items-center justify-center rounded-full border border-amber-200/70 bg-amber-50/50 px-3 py-1.5 text-center text-[0.55rem] font-medium uppercase tracking-[0.18em] text-amber-950/85 sm:flex-initial sm:min-h-0 sm:justify-start sm:text-[0.6rem] sm:tracking-[0.22em]">
                   {cantidadEventos} fechas proyectadas
                 </span>
               )}
@@ -190,7 +189,7 @@ export default function Page() {
 
       {error && (
         <div
-          className="rounded-3xl border border-red-200/70 bg-linear-to-br from-red-50/95 to-white/80 p-6 text-center shadow-sm"
+          className="rounded-2xl border border-red-200/70 bg-linear-to-br from-red-50/95 to-white/80 p-4 text-center shadow-sm sm:rounded-3xl sm:p-6"
           role="alert"
         >
           <p className="font-medium text-red-950">{error}</p>
@@ -206,11 +205,11 @@ export default function Page() {
 
       {!cargando && !error && bandasTodas != null && countSinDistribuir > 0 && (
         <div
-          className="relative z-[1] h-12 mb-6  flex flex-col gap-3 overflow-hidden rounded-2xl border border-amber-500 bg-yellow-300/50 px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6"
+          className="relative z-1 mb-6 flex flex-col gap-3 rounded-2xl border border-amber-500 bg-yellow-300/50 px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6"
           role="status"
         >
           <p
-            className="text-sm font-medium text-amber-950 sm:text-base"
+            className="min-w-0 text-pretty text-sm font-medium leading-snug text-amber-950 sm:text-base sm:leading-normal"
             style={{ fontFamily: "var(--font-lexend-ui)" }}
           >
             Hay {countSinDistribuir}{" "}
@@ -220,7 +219,7 @@ export default function Page() {
           <button
             type="button"
             onClick={() => setOpenModalSinDistribuir(true)}
-            className="inline-flex shrink-0 items-center justify-center rounded-full border border-amber-800/20 bg-amber-900/90 px-5 py-2.5 text-sm font-semibold text-amber-50 shadow-sm transition hover:bg-amber-950"
+            className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-full border border-amber-800/20 bg-amber-900/90 px-5 text-sm font-semibold text-amber-50 shadow-sm transition hover:bg-amber-950 sm:h-auto sm:w-auto sm:py-2.5"
             style={{ fontFamily: "var(--font-lexend-ui)" }}
           >
             Actualizar
@@ -229,18 +228,18 @@ export default function Page() {
       )}
 
       {!cargando && !error && bandasList != null && !hayDistribucion && (
-        <div className="relative overflow-hidden rounded-3xl border border-amber-200/60 bg-amber-700/90 p-8 text-center shadow-[0_22px_50px_-38px_rgba(120,53,15,0.45)] sm:p-10">
+        <div className="relative overflow-hidden rounded-2xl border border-amber-200/60 bg-amber-700/90 p-5 text-center shadow-[0_22px_50px_-38px_rgba(120,53,15,0.45)] sm:rounded-3xl sm:p-10">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-linear-to-br from-amber-200/55 to-transparent blur-2xl"
           />
           <p
-            className="text-balance uppercase leading-tight tracking-[0.03em] text-stone-800 sm:text-xl"
+            className="text-balance text-lg uppercase leading-tight tracking-[0.03em] text-stone-800 sm:text-xl"
             style={{ fontFamily: "var(--font-anton-display), sans-serif" }}
           >
             Aún no hay grupos para armar eventos
           </p>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-stone-600">
+          <p className="mx-auto mt-3 max-w-md text-[0.8125rem] leading-relaxed text-stone-600 sm:text-sm">
             Generá la distribución en la página Distribuciones y volvé acá para
             ver el calendario propuesto con las bandas.
           </p>

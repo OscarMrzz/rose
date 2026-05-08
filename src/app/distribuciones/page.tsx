@@ -268,7 +268,7 @@ export default function Page() {
           className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(14,165,233,0.11),transparent_55%),radial-gradient(ellipse_55%_45%_at_100%_55%,rgba(71,85,105,0.07),transparent_50%),linear-gradient(180deg,#e2e8f0_0%,#f1f5f9_40%,#e2e8f0_100%)]"
         />
 
-        <header className="sticky top-2 z-10 mb-8 sm:top-3">
+        <header className=" top-2 z-10 mb-8 sm:top-3">
           <div className="rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm shadow-slate-900/5 backdrop-blur-md sm:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 pb-3">
               <div>

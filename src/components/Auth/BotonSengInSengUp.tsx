@@ -8,7 +8,7 @@ export default function BotonSengInSengUp({ onClick, haySesion }: Props) {
   return (
     <div className="  ">
       {haySesion ? (
-        <button className="bg-white w-48  px-4 py-2 rounded hover:bg-slate-500 transition-colors" onClick={onClick}>
+        <button className="bg-white w-36  px-4 py-2 rounded hover:bg-slate-500 transition-colors" onClick={onClick}>
           Cerrar sesion
         </button>
       ) : (
