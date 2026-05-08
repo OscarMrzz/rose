@@ -1,12 +1,16 @@
 import Modal from "@/components/modal/Modal";
 import { login, register } from "@/lib/services/authServices";
+import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
+
+const USER_AUTH_KEY = ["userAuth"] as const;
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
 export default function FormularioAuth({ open, onClose }: Props) {
+  const queryClient = useQueryClient();
   const [seVaARegistrar, setSeVaARegistrar] = React.useState(false);
   const [stepRegistro, setStepRegistro] = React.useState(1);
   const [isError, setIsError] = React.useState(false);
@@ -46,7 +50,7 @@ export default function FormularioAuth({ open, onClose }: Props) {
       }
 
       if (resultado.data) {
-        
+        await queryClient.invalidateQueries({ queryKey: USER_AUTH_KEY });
         onClose();
       } else {
         setIsError(true);
@@ -63,8 +67,8 @@ export default function FormularioAuth({ open, onClose }: Props) {
     const password = event.currentTarget.password.value;
 
     try {
-      const usuario = await register(email, password);
-  
+      await register(email, password);
+      await queryClient.invalidateQueries({ queryKey: USER_AUTH_KEY });
       onClose();
     } catch (error) {
       console.error("Error al registrar usuario:", error);

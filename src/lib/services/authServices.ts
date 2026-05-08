@@ -18,16 +18,11 @@ export async function register(email: string, password: string) {
     return { data, error };
 }
 
-export const getUserAuth = async () => {
+export const getUserAuth = async (): Promise<User | null> => {
     const { data, error } = await ClienteBrowserSupabase.auth.getUser();
-
-    try {
-        if (!data) return null
-        return data.user as User | null;
-    } catch (error) {
-        return null;
-    }
-}
+    if (error || !data?.user) return null;
+    return data.user;
+};
 
 export async function logout() {
     const { error } = await ClienteBrowserSupabase.auth.signOut();
