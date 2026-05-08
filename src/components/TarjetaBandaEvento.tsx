@@ -11,28 +11,36 @@ type Props = {
   indiceVisual?: number;
 };
 
-function categoriaRibbon(categoria: string) {
+/** Fondos y bordes planos por categoría */
+function estiloCategoria(categoria: string) {
   const c = (categoria || "").toUpperCase();
   if (c === "PREMIER") {
     return {
-      bar: "from-amber-200 via-yellow-600 to-orange-950",
-      glow: "shadow-[0_0_24px_rgba(251,191,36,0.45)]",
-      text: "text-amber-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]",
+      chipBg: "bg-amber-100",
+      chipBorder: "border-amber-400",
+      chipRing: "shadow-[0_0_0_1px_rgba(251,191,36,0.35)]",
+      text: "text-amber-950",
     };
   }
   if (c === "A") {
     return {
-      bar: "from-zinc-300 via-zinc-600 to-zinc-950",
-      glow: "shadow-[0_0_18px_rgba(161,161,170,0.35)]",
-      text: "text-zinc-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]",
+      chipBg: "bg-stone-200",
+      chipBorder: "border-stone-500",
+      chipRing: "shadow-[0_0_0_1px_rgba(120,113,108,0.22)]",
+      text: "text-stone-900",
     };
   }
   return {
-    bar: "from-sky-400 via-blue-900 to-indigo-950",
-    glow: "shadow-[0_0_18px_rgba(56,189,248,0.35)]",
-    text: "text-sky-50 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]",
+    chipBg: "bg-sky-100",
+    chipBorder: "border-sky-400",
+    chipRing: "shadow-[0_0_0_1px_rgba(56,189,248,0.35)]",
+    text: "text-sky-950",
   };
 }
+
+/** Patrón de cuadrícula muy suave (solo líneas, sin degradado) */
+const PATRON_GRID =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath fill='none' stroke='%23d6d3d1' stroke-opacity='0.35' d='M20 0H0v20'/%3E%3C/svg%3E\")";
 
 export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
   const [urlImagen, setUrlImagen] = useState<string | null>(null);
@@ -64,70 +72,68 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
 
   const tieneImagen = Boolean(urlImagen);
   const delay = Math.min(indiceVisual * 45, 400);
-  const ribbon = categoriaRibbon(banda.categoria_banda);
+  const cat = estiloCategoria(banda.categoria_banda);
+
+  const chipClase = `${cat.chipBg} ${cat.chipBorder} ${cat.chipRing} ${cat.text}`;
 
   return (
     <article
-      className={`${eventosTypeClassName} group relative isolate flex aspect-[3/4] min-h-[12.5rem] flex-col overflow-hidden rounded-lg bg-zinc-950 shadow-[0_24px_50px_-28px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.06)_inset] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform hover:-translate-y-1 hover:shadow-[0_34px_64px_-32px_rgba(0,0,0,0.75),0_0_0_1px_rgba(251,191,36,0.12)_inset] animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none`}
+      className={`${eventosTypeClassName} relative isolate flex aspect-[3/4] min-h-[12.5rem] flex-col overflow-hidden rounded-lg border-2 border-stone-200 bg-white shadow-[8px_8px_0_0_rgba(231,229,228,0.95)] animate-in fade-in slide-in-from-bottom-2 fill-mode-both motion-reduce:animate-none`}
       style={{
         animationDelay: `${delay}ms`,
-        animationDuration: "0.6s",
+        animationDuration: "0.55s",
         fontFamily: "var(--font-lexend-ui), system-ui, sans-serif",
       }}
     >
-      {/* Textura papel / ruido */}
+      {/* Ligera textura (ruido monocromo, no color degradado) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 z-[5] rounded-lg opacity-[0.07] mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.72%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.65%22/%3E%3C/svg%3E')]"
+        className="pointer-events-none absolute inset-0 z-[5] rounded-[inherit] opacity-[0.04] mix-blend-multiply bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.72%22 numOctaves=%223%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.65%22/%3E%3C/svg%3E')]"
       />
 
-      {/* Marco doble */}
+      {/* Marco interior plano */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-[2px] z-[6] rounded-[6px] border border-black/55"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[6px] z-[6] rounded-[4px] border border-amber-500/18"
+        className="pointer-events-none absolute inset-[3px] z-[6] rounded-[5px] border border-dashed border-stone-300/80"
       />
 
-      {/* Esquinas tipo sellos */}
+      {/* Esquinas */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-2 top-2 z-[6] h-5 w-5 border-l-2 border-t-2 border-amber-400/55"
+        className="pointer-events-none absolute left-2 top-2 z-[6] h-5 w-5 border-l-2 border-t-2 border-amber-500"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute right-2 top-2 z-[6] h-5 w-5 border-r-2 border-t-2 border-amber-400/55"
+        className="pointer-events-none absolute right-2 top-2 z-[6] h-5 w-5 border-r-2 border-t-2 border-amber-500"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-2 left-2 z-[6] h-5 w-5 border-b-2 border-l-2 border-amber-400/40"
+        className="pointer-events-none absolute bottom-2 left-2 z-[6] h-5 w-5 border-b-2 border-l-2 border-stone-400"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-2 right-2 z-[6] h-5 w-5 border-b-2 border-r-2 border-amber-400/40"
+        className="pointer-events-none absolute bottom-2 right-2 z-[6] h-5 w-5 border-b-2 border-r-2 border-stone-400"
       />
 
-      {/* Franja decorativa lateral */}
+      {/* Acento lateral: bloque sólido (no fade) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 top-0 z-[4] w-1.5 bg-linear-to-b from-amber-500/90 via-amber-600/25 to-transparent opacity-80"
+        className="pointer-events-none absolute left-0 top-8 z-[4] h-20 w-1.5 rounded-r-sm bg-amber-400"
       />
 
       {cargando && (
         <div
-          className="absolute inset-0 z-[20] flex flex-col items-center justify-center gap-4 bg-linear-to-br from-zinc-900 via-zinc-950 to-black"
+          className="absolute inset-0 z-[20] flex flex-col items-center justify-center gap-4 bg-stone-100"
           aria-busy="true"
           aria-label="Cargando imagen de la banda"
         >
           <div className="relative h-16 w-16">
-            <div className="absolute inset-0 rounded-md border-2 border-amber-500/30" />
-            <div className="absolute inset-2 animate-pulse rounded-sm bg-linear-to-br from-amber-500/25 to-zinc-800/80" />
-            <div className="absolute inset-0 animate-[spin_2.4s_linear_infinite] rounded-md border-2 border-transparent border-t-amber-400/70" />
+            <div className="absolute inset-0 rounded-md border-2 border-stone-400" />
+            <div className="absolute inset-2 animate-pulse rounded-sm bg-amber-200" />
+            <div className="absolute inset-0 animate-[spin_2.4s_linear_infinite] rounded-md border-2 border-transparent border-t-amber-600" />
           </div>
           <span
-            className="text-[0.58rem] font-semibold uppercase tracking-[0.38em] text-amber-200/70"
+            className="text-[0.58rem] font-semibold uppercase tracking-[0.38em] text-stone-500"
             style={{ fontFamily: "var(--font-lexend-ui)" }}
           >
             Cargando
@@ -137,23 +143,23 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
 
       {!cargando && tieneImagen && urlImagen && (
         <>
-          <div className="relative z-[2] h-[58%] w-full shrink-0 overflow-hidden sm:h-[60%]">
+          <div className="relative z-[2] h-[58%] w-full shrink-0 overflow-hidden bg-stone-100 sm:h-[60%]">
             <Image
               src={urlImagen}
               alt={banda.nombre_banda}
               fill
-              className="object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.06] group-hover:brightness-110 group-hover:contrast-[1.05]"
+              className="object-cover"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
             />
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(0,0,0,0.55),transparent_68%)]" />
+            {/* Transición foto → texto: franja sólida semitransparente */}
+          
 
-            {/* Cinta categoría */}
+            {/* Cinta categoría (plana) */}
             <div
-              className={`absolute -left-8 top-7 z-[8] w-[145%] origin-top-left -rotate-[34deg] bg-linear-to-r py-1.5 text-center ${ribbon.bar} ${ribbon.glow}`}
+              className={`absolute -left-8 top-7 z-[8] w-[145%] origin-top-left -rotate-[34deg] border-y-2 border-white py-1.5 text-center ${cat.chipBg} ${cat.chipRing}`}
             >
               <span
-                className={`block text-[0.58rem] font-semibold uppercase tracking-[0.42em] ${ribbon.text}`}
+                className={`block text-[0.58rem] font-semibold uppercase tracking-[0.42em] ${cat.text}`}
                 style={{ fontFamily: "var(--font-lexend-ui)" }}
               >
                 {banda.categoria_banda}
@@ -161,23 +167,26 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
             </div>
           </div>
 
-          <div className="relative z-[3] flex flex-1 flex-col justify-end bg-linear-to-b from-zinc-950 via-zinc-950 to-black px-3.5 pb-3.5 pt-2">
+          <div className="relative z-[3] flex flex-1 flex-col justify-end bg-stone-50 px-3.5 pb-3.5 pt-2">
             <div
               aria-hidden
-              className="mb-2.5 h-px w-full bg-linear-to-r from-transparent via-amber-500/45 to-transparent"
-            />
+              className="mb-2.5 flex items-center gap-2"
+            >
+              <span className="h-2 w-2 shrink-0 rounded-sm bg-amber-500" />
+              <span className="h-0.5 flex-1 bg-stone-300" />
+              <span className="h-2 w-2 shrink-0 rounded-sm bg-stone-300" />
+            </div>
             <p
-              className="mb-1 text-[0.55rem] font-semibold uppercase tracking-[0.45em] text-amber-500/90"
+              className="mb-1 text-[0.55rem] font-semibold uppercase tracking-[0.45em] text-stone-500"
               style={{ fontFamily: "var(--font-lexend-ui)" }}
             >
-              Actuación
+              Banda
             </p>
             <h3
-              className="line-clamp-2 text-balance uppercase leading-[1.02] tracking-[0.02em] text-amber-50"
+              className="line-clamp-2 text-balance uppercase leading-[1.02] tracking-[0.02em] text-stone-900"
               style={{
                 fontFamily: "var(--font-anton-display), sans-serif",
                 fontSize: "clamp(0.95rem, 1.15vw + 0.55rem, 1.25rem)",
-                textShadow: "0 2px 18px rgba(0,0,0,0.75)",
               }}
             >
               {banda.nombre_banda}
@@ -188,57 +197,63 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
 
       {!cargando && !tieneImagen && (
         <>
-          <div className="absolute inset-0 z-[2] flex flex-col items-stretch justify-between overflow-hidden bg-zinc-950">
+          <div
+            className="absolute inset-0 z-[2] flex flex-col items-stretch justify-between overflow-hidden bg-amber-50/80"
+            style={{ backgroundImage: PATRON_GRID }}
+          >
+            {/* Bloques decorativos planos */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-[repeating-linear-gradient(-28deg,transparent,transparent_11px,rgba(251,191,36,0.04)_11px,rgba(251,191,36,0.04)_12px)]"
+              className="pointer-events-none absolute -right-4 top-6 h-16 w-16 rotate-6 border-2 border-amber-300/80 bg-amber-100/90"
             />
             <div
               aria-hidden
-              className="absolute inset-0 bg-linear-to-br from-zinc-800/50 via-zinc-950 to-black"
-            />
-            <div
-              aria-hidden
-              className="absolute -right-1/4 top-0 h-[120%] w-1/2 rotate-12 bg-linear-to-l from-amber-500/12 to-transparent blur-3xl"
+              className="pointer-events-none absolute -left-3 bottom-28 h-12 w-12 -rotate-12 border-2 border-stone-300 bg-stone-100"
             />
 
             <div className="relative z-[3] flex flex-1 flex-col items-center justify-center px-3 py-6 text-center">
               <div
                 aria-hidden
-                className="mb-3 h-px w-12 bg-linear-to-r from-transparent via-amber-400/80 to-transparent sm:w-16"
-              />
+                className="mb-3 flex items-center gap-1.5"
+              >
+                <span className="h-px w-6 bg-stone-400" />
+                <span className="h-1.5 w-1.5 rotate-45 border-2 border-amber-500" />
+                <span className="h-px w-6 bg-stone-400" />
+              </div>
               <p
-                className="max-h-[min(62%,13rem)] max-w-full text-balance uppercase leading-[0.94] text-amber-50"
+                className="max-h-[min(62%,13rem)] max-w-full text-balance uppercase leading-[0.94] text-stone-800"
                 style={{
                   fontFamily: "var(--font-anton-display), sans-serif",
                   fontSize: "clamp(1.45rem, 6vw + 0.65rem, 2.85rem)",
                   letterSpacing: "0.03em",
-                  textShadow:
-                    "0 0 52px rgba(251,191,36,0.28), 0 2px 0 rgba(24,24,27,0.95), 0 6px 28px rgba(0,0,0,0.85)",
                 }}
               >
                 {banda.nombre_banda}
               </p>
               <div
                 aria-hidden
-                className="mt-3 h-px w-12 bg-linear-to-r from-transparent via-amber-400/80 to-transparent sm:w-16"
-              />
+                className="mt-3 flex items-center gap-1.5"
+              >
+                <span className="h-px w-6 bg-stone-400" />
+                <span className="h-1.5 w-1.5 rotate-45 border-2 border-amber-500" />
+                <span className="h-px w-6 bg-stone-400" />
+              </div>
             </div>
 
-            <div className="relative z-[3] border-t border-amber-500/25 bg-black/65 px-3 py-3.5 backdrop-blur-md">
+            <div className="relative z-[3] border-t-2 border-amber-200 bg-white px-3 py-3.5">
               <div className="flex items-center justify-center gap-3">
                 <span
-                  className="hidden h-[2px] flex-1 max-w-[5rem] bg-linear-to-r from-transparent to-amber-500/40 sm:block"
+                  className="hidden h-0.5 flex-1 max-w-20 bg-stone-300 sm:block"
                   aria-hidden
                 />
                 <span
-                  className={`rounded-md border border-white/10 bg-linear-to-r px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.38em] shadow-lg ${ribbon.bar} ${ribbon.glow} ${ribbon.text}`}
+                  className={`rounded-md border-2 px-4 py-2 text-[0.58rem] font-semibold uppercase tracking-[0.38em] ${chipClase}`}
                   style={{ fontFamily: "var(--font-lexend-ui)" }}
                 >
                   {banda.categoria_banda}
                 </span>
                 <span
-                  className="hidden h-[2px] flex-1 max-w-[5rem] bg-linear-to-l from-transparent to-amber-500/40 sm:block"
+                  className="hidden h-0.5 flex-1 max-w-20 bg-stone-300 sm:block"
                   aria-hidden
                 />
               </div>

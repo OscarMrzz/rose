@@ -33,7 +33,7 @@ export default function RootLayout({
       <Providers>
 
    
-      <body className=" h-full flex flex-col w-full  antialiased bg-slate-200 ">
+      <body className=" h-full flex flex-col w-full  antialiased  ">
         <header>
           <Navbard />
         </header>
