@@ -6,17 +6,31 @@ import {
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export type TipoDistribucion = "tabla" | "aleatorio";
+export type TipoDistribucion =
+  | "tabla"
+  | "aleatorio"
+  | "manual_grupo"
+  | "manual_grupo_subgrupo";
 export type CantidadEventos = 6 | 8 | 12 | 14 | 18 | 20 | 24;
 /** Vista preferida: todo el listado vs uno a uno */
 export type TipoMostrar = "todo" | "1a1";
 
 const STORAGE_KEY = "rose-configuracion";
 
+const VALID_TIPOS: TipoDistribucion[] = [
+  "tabla",
+  "aleatorio",
+  "manual_grupo",
+  "manual_grupo_subgrupo",
+];
+
 function parseTipoDistribucion(
   value: string | null | undefined,
 ): TipoDistribucion {
-  return value === "aleatorio" ? "aleatorio" : "tabla";
+  if (value && VALID_TIPOS.includes(value as TipoDistribucion)) {
+    return value as TipoDistribucion;
+  }
+  return "tabla";
 }
 
 function parseCantidad(
@@ -50,6 +64,9 @@ export type ConfiguracionStore = {
 
   /** Crea o actualiza en Supabase y deja guardado `id_configuracion`. */
   persistToSupabase: () => Promise<{ ok: boolean; message: string }>;
+
+  /** Restablece el store a valores por defecto (al cerrar sesión). */
+  reset: () => void;
 };
 
 export const useConfiguracionStore = create<ConfiguracionStore>()(
@@ -65,6 +82,15 @@ export const useConfiguracionStore = create<ConfiguracionStore>()(
       setCantidadEventos: (v) => set({ cantidad_eventos: v }),
       setTipoMostrar: (v) => set({ tipo_mostrar: v }),
       setRelacionAnfitrion: (v) => set({ relacion_anfitrion: v }),
+
+      reset: () =>
+        set({
+          id_configuracion: null,
+          tipo_distribucion: "tabla",
+          cantidad_eventos: 6,
+          tipo_mostrar: "todo",
+          relacion_anfitrion: "",
+        }),
 
       applyFromServer: (row) => {
         set({

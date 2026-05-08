@@ -1,6 +1,7 @@
 "use client";
 
-import { useConfiguracionStore } from "@/stores/configuracionStore";
+import { useConfiguracionStore, type TipoDistribucion } from "@/stores/configuracionStore";
+import { setConfigCookies } from "@/lib/configCookies";
 import React from "react";
 
 const selectBase =
@@ -26,6 +27,15 @@ export default function ConfigPage() {
     setSaving(true);
     setSaveMsg(null);
     const result = await persistToSupabase();
+    if (result.ok) {
+      setConfigCookies({
+        id_configuracion: idConfig,
+        tipo_distribucion: tipoDistribucion,
+        cantidad_eventos: cantidadEventos,
+        tipo_mostrar: tipoMostrar,
+        relacion_anfitrion: relacionAnfitrion,
+      });
+    }
     setSaveMsg(result.message);
     setSaving(false);
   };
@@ -38,11 +48,7 @@ export default function ConfigPage() {
         </p>
         <h1 className="text-2xl font-semibold text-slate-900">Configuración</h1>
     
-        {idConfig && (
-          <p className="mt-2 font-mono text-xs text-slate-500">
-            Id en servidor: {idConfig.slice(0, 8)}…
-          </p>
-        )}
+  
       </header>
 
       <div className="flex flex-col gap-6">
@@ -54,7 +60,7 @@ export default function ConfigPage() {
             <select
               value={tipoDistribucion}
               onChange={(e) =>
-                setTipoDistribucion(e.target.value as "tabla" | "aleatorio")
+                setTipoDistribucion(e.target.value as TipoDistribucion)
               }
               className={selectBase}
             >
@@ -63,8 +69,13 @@ export default function ConfigPage() {
               </option>
               <option value="tabla">Distribución por tabla</option>
               <option value="aleatorio">Distribución al azar</option>
+              <option value="manual_grupo">Distribución manual - solo grupo</option>
+              <option value="manual_grupo_subgrupo">Distribución manual - grupo y subgrupo</option>
             </select>
           </label>
+          <p className="mt-1 text-xs text-slate-500">
+            Aqui definimos de que manera se distribuiran las bandas, si selecciona manual, al agregar la banda debe indicar a que grupo pertenece 
+          </p>
 
           <label className="flex min-w-0 flex-1 flex-col gap-1 sm:w-36 sm:flex-none">
             <span className="text-sm font-medium text-slate-700">
@@ -115,24 +126,11 @@ export default function ConfigPage() {
             <option value="1a1">Uno a uno</option>
           </select>
           <p className="mt-1 text-xs text-slate-500">
-            El botón &quot;Mostrar&quot; en Distribuciones usa este modo (también se
-            guarda en el dispositivo).
+            El botón &quot;Mostrar&quot; en Distribuciones usa este modo  para saber como mostrar los grupos(Es ejecto dramatico, enrialidad los grupos ya existen cuando preciona distribuir)
           </p>
         </label>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-slate-700">
-            Relación anfitrión
-          </span>
-          <input
-            type="text"
-            value={relacionAnfitrion}
-            onChange={(e) => setRelacionAnfitrion(e.target.value)}
-            className={selectBase}
-            placeholder="Opcional"
-            autoComplete="off"
-          />
-        </label>
+  
 
         <div className="flex flex-col gap-2 border-t border-slate-200 pt-6 sm:flex-row sm:items-center">
           <button

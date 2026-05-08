@@ -5,6 +5,7 @@ import {
   editarLogoBanda,
 } from "@/lib/services/bandasServices";
 import { bandaInterface } from "@/interface/interfaces";
+import { useConfiguracionStore } from "@/stores/configuracionStore";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -14,17 +15,6 @@ type Props = {
   bandaAEditar: bandaInterface;
   refrescar?: () => void;
 };
-/* 
-    id_banda: string;
-    created_at_banda: string;
-    nombre_banda: string;
-    categoria_banda: string;
-    path_image_banda: string;
-    grupo_banda: string;
-    subgrupo_banda: string;
-    posicion_tabla: number;
-
-*/
 
 export default function FormularioEditarbanda({
   open,
@@ -32,16 +22,24 @@ export default function FormularioEditarbanda({
   bandaAEditar,
   refrescar,
 }: Props) {
+  const tipoDistribucion = useConfiguracionStore((s) => s.tipo_distribucion);
+  const mostrarGrupo =
+    tipoDistribucion === "manual_grupo" ||
+    tipoDistribucion === "manual_grupo_subgrupo";
+  const mostrarSubgrupo = tipoDistribucion === "manual_grupo_subgrupo";
+
   const [formData, setFormData] = useState<Partial<bandaInterface>>({
     nombre_banda: bandaAEditar.nombre_banda,
     categoria_banda: bandaAEditar.categoria_banda,
     path_image_banda: bandaAEditar.path_image_banda,
     posicion_tabla: bandaAEditar.posicion_tabla,
+    grupo_banda: bandaAEditar.grupo_banda,
+    subgrupo_banda: bandaAEditar.subgrupo_banda,
   });
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Cargar la imagen existente cuando se abre el modal
   useEffect(() => {
     const cargarImagen = async () => {
       if (
@@ -65,17 +63,16 @@ export default function FormularioEditarbanda({
     cargarImagen();
   }, [open, bandaAEditar.path_image_banda]);
 
-  // Resetear el formulario cuando cambia la banda a editar
   useEffect(() => {
-    const resetForm = () => {
-      setFormData({
-        nombre_banda: bandaAEditar.nombre_banda,
-        categoria_banda: bandaAEditar.categoria_banda,
-        path_image_banda: bandaAEditar.path_image_banda,
-      });
-    };
-
-    resetForm();
+    setFormData({
+      nombre_banda: bandaAEditar.nombre_banda,
+      categoria_banda: bandaAEditar.categoria_banda,
+      path_image_banda: bandaAEditar.path_image_banda,
+      posicion_tabla: bandaAEditar.posicion_tabla,
+      grupo_banda: bandaAEditar.grupo_banda,
+      subgrupo_banda: bandaAEditar.subgrupo_banda,
+    });
+    setErrorMsg(null);
   }, [bandaAEditar]);
 
   const handleInputChange = (
@@ -94,11 +91,8 @@ export default function FormularioEditarbanda({
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      // Crear URL temporal para vista previa
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-
-      // Opcional: También puedes guardar el nombre del archivo en formData
       setFormData((prev) => ({
         ...prev,
         path_image_banda: file.name,
@@ -108,11 +102,29 @@ export default function FormularioEditarbanda({
 
   const handleSubmit = async (evento: React.FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
+    setErrorMsg(null);
+
+    if (!formData.nombre_banda?.trim()) {
+      setErrorMsg("El nombre de la banda es obligatorio.");
+      return;
+    }
+    if (!formData.categoria_banda) {
+      setErrorMsg("Seleccione una categoría.");
+      return;
+    }
+    if (mostrarGrupo && !formData.grupo_banda) {
+      setErrorMsg("Seleccione el grupo de la banda.");
+      return;
+    }
+    if (mostrarSubgrupo && !formData.subgrupo_banda) {
+      setErrorMsg("Seleccione el subgrupo de la banda.");
+      return;
+    }
+
     let URLLogo = "";
     if (selectedFile && formData.nombre_banda) {
-      URLLogo = `${formData.nombre_banda?.replace(/\s+/g, "_")}_logo`;
+      URLLogo = `${formData.nombre_banda.replace(/\s+/g, "_")}_logo`;
     } else {
-      // Mantener la imagen existente si no se selecciona una nueva
       URLLogo = bandaAEditar.path_image_banda;
     }
 
@@ -121,16 +133,14 @@ export default function FormularioEditarbanda({
       categoria_banda: formData.categoria_banda || "",
       path_image_banda: URLLogo,
       posicion_tabla: formData.posicion_tabla || 0,
-      grupo_banda: bandaAEditar.grupo_banda || "",
-      subgrupo_banda: bandaAEditar.subgrupo_banda || "",
+      grupo_banda: mostrarGrupo ? (formData.grupo_banda || "") : "",
+      subgrupo_banda: mostrarSubgrupo ? (formData.subgrupo_banda || "") : "",
     };
 
     try {
       await updateBanda(bandaAEditar.id_banda, nuevaBanda as bandaInterface);
-      // Si hay un archivo seleccionado, subirlo
       if (selectedFile) {
         const resultadoLogo = await editarLogoBanda(selectedFile, URLLogo);
-        // Si la subida falla, solo loguea el error pero no detengas el proceso
         if (!resultadoLogo) {
           console.error("Error al subir el logo de la banda.");
         }
@@ -139,6 +149,7 @@ export default function FormularioEditarbanda({
       refrescar?.();
     } catch (error) {
       console.error("Error al editar la banda:", error);
+      setErrorMsg("Ocurrió un error al guardar la banda.");
     }
   };
 
@@ -184,15 +195,54 @@ export default function FormularioEditarbanda({
               name="posicion_tabla"
               placeholder="Posicion en tabla"
               min="0"
+              value={formData.posicion_tabla ?? ""}
               onChange={handleInputChange}
               className="bg-slate-100 p-2 rounded"
             />
           </div>
+
+          {mostrarGrupo && (
+            <div className="flex flex-col">
+              <label htmlFor="grupo_banda">Grupo</label>
+              <select
+                name="grupo_banda"
+                id="grupo_banda"
+                value={formData.grupo_banda || ""}
+                className="bg-slate-200 p-2 rounded"
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>
+                  Seleccione un grupo
+                </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+          )}
+
+          {mostrarSubgrupo && (
+            <div className="flex flex-col">
+              <label htmlFor="subgrupo_banda">Subgrupo</label>
+              <select
+                name="subgrupo_banda"
+                id="subgrupo_banda"
+                value={formData.subgrupo_banda || ""}
+                className="bg-slate-200 p-2 rounded"
+                onChange={handleInputChange}
+              >
+                <option value="" disabled>
+                  Seleccione un subgrupo
+                </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+            </div>
+          )}
+
           <div className="flex flex-col">
             <label className="text-gray-200 mb-1" htmlFor="path_image_banda">
               Logo de la Banda
             </label>
-
             <label className="relative w-32 h-32 bg-gray-300 cursor-pointer hover:bg-gray-400 transition-colors overflow-hidden rounded">
               <input
                 type="file"
@@ -210,12 +260,19 @@ export default function FormularioEditarbanda({
                   className="object-contain"
                 />
               ) : (
-                <span className="text-gray-600 text-2xl font-black w-full h-full flex justify-center items-center overflow-hidden ">
+                <span className="text-gray-600 text-2xl font-black w-full h-full flex justify-center items-center overflow-hidden">
                   LOGO
                 </span>
               )}
             </label>
           </div>
+
+          {errorMsg && (
+            <p className="text-red-600 text-sm" role="alert">
+              {errorMsg}
+            </p>
+          )}
+
           <div className="flex flex-col gap-2 justify-end mt-12">
             <button
               type="submit"
