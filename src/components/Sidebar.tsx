@@ -22,6 +22,13 @@ export default function Sidebar() {
       >
         Distribuciones
       </Link>
+
+      <Link
+        className={`p-2 w-full h-12 hover:bg-slate-400 transition-colors cursor-pointer duration-300 ${pathname === "/eventos" ? "bg-slate-500 text-white" : ""}`}
+        href="/eventos"
+      >
+        Eventos
+      </Link>
     </div>
   );
 }

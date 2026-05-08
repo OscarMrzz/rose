@@ -20,7 +20,13 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL('/', req.url))
   }
 
+  if (pathname.startsWith('/eventos') && !user) {
+    return NextResponse.redirect(new URL('/', req.url))
+  }
 
+  if (pathname.startsWith('/config') && !user) {
+    return NextResponse.redirect(new URL('/', req.url))
+  }
 
   return NextResponse.next()
 }
@@ -29,6 +35,7 @@ export const config = {
   matcher: [
     '/bandas/:path*',
     '/distribuciones/:path*',
-   
+    '/eventos/:path*',
+    '/config/:path*',
   ]
 };

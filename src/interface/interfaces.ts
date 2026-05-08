@@ -44,5 +44,12 @@ export interface conexionEventoGrupoInterface {
 }
 
 
-
+export interface configuracionInterface {
+    id_configuracion: string;           
+    created_at: Date | string;          
+    tipo_distribucion?: string | null;  
+    cantidad_eventos?: number | null;   
+    tipo_mostrar?: string | null;       
+    relacion_anfitrion?: string | null; 
+  }
 

@@ -198,7 +198,7 @@ export default function GrupoEventos({ numeroEventos, bandasList }: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-24 mt-60">
+      <div className="flex flex-col gap-24 mt-4 sm:mt-8">
         {eventos.map((evento) => (
           <div
             className="flex w-full justify-center flex-col gap-6"

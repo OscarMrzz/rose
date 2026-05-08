@@ -46,6 +46,20 @@ export default function Navbard() {
             >
               Distribuciones
             </Link>
+
+            <Link
+              className={`p-2 w-full h-12 text-slate-300 hover:text-slate-400  transition-colors cursor-pointer duration-300 `}
+              href="/eventos"
+            >
+              Eventos
+            </Link>
+
+            <Link
+              className={`p-2 w-full h-12 text-slate-300 hover:text-slate-400  transition-colors cursor-pointer duration-300 `}
+              href="/config"
+            >
+              Configuración
+            </Link>
       
           <BotonSengInSengUp
             onClick={() => abrirFormularioAuth()}

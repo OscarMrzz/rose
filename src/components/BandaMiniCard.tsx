@@ -89,7 +89,7 @@ export default function BandaMiniCard({
         titulo="Eliminar Banda"
       />
 
-      <div className="flex flex-col w-full h-full bg-white shadow animate-zoom-in">
+      <div className="flex flex-col w-full h-full bg-white shadow ">
         {isLoading ? (
           <div className="text-gray-500 p-2">Cargando imagen...</div>
         ) : imagen ? (
