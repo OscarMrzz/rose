@@ -24,10 +24,12 @@ export default function BandaMiniCard({
   const [imagen, setImagen] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = React.useState(false);
   const [openFormularioEditar, setOpenFormularioEditar] = useState(false);
   const [openConfirmarEliminar, setOpenConfirmarEliminar] = useState(false);
 
   React.useEffect(() => {
+    setImageLoadError(false);
     if (banda?.path_image_banda && banda.path_image_banda.trim() !== "") {
       setIsLoading(true);
       setError(null);
@@ -72,6 +74,9 @@ export default function BandaMiniCard({
     refrescar?.();
   };
 
+  const mostrarNombreFallback =
+    !isLoading && (!imagen || error || imageLoadError);
+
   return (
     <>
       <FormularioEditarbanda
@@ -92,22 +97,21 @@ export default function BandaMiniCard({
       <div className="flex flex-col w-full h-full bg-white shadow ">
         {isLoading ? (
           <div className="text-gray-500 p-2">Cargando imagen...</div>
-        ) : imagen ? (
+        ) : mostrarNombreFallback ? (
+          <div className="flex min-h-[100px] w-full items-center justify-center bg-neutral-100 p-3 text-center">
+            <span className="line-clamp-3 text-sm font-medium text-neutral-800">
+              {banda.nombre_banda}
+            </span>
+          </div>
+        ) : (
           <Image
-            src={imagen}
+            src={imagen!}
             alt={banda.nombre_banda}
             width={100}
             height={100}
-            className="object-cover w-full h-full"
+            className="h-full w-full object-cover"
+            onError={() => setImageLoadError(true)}
           />
-        ) : error ? (
-          <div className="text-gray-500 text-center p-2">
-            <div className="text-sm  p-2">Sin imagen</div>
-          </div>
-        ) : (
-          <div className="text-gray-500 text-center p-2">
-            <div className="text-sm p-2">Sin imagen</div>
-          </div>
         )}
 
         <div className="p-4"></div>
