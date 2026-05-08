@@ -1,11 +1,13 @@
 "use client";
 
+import BandasSinDistribuirModal from "@/components/BandasSinDistribuirModal";
 import GrupoEventos from "@/components/GrupoEventos";
 import { bandaInterface } from "@/interface/interfaces";
 import { eventosTypeClassName } from "@/lib/eventosTypography";
 import { getAllBandas } from "@/lib/services/bandasServices";
+import { bandaSinGrupoOSubgrupo } from "@/lib/utils/Distirbuir";
 import { useConfiguracionStore } from "@/stores/configuracionStore";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 const categorias = {
   0: "B",
@@ -74,19 +76,24 @@ export default function Page() {
   const cantidadEventos = useConfiguracionStore((s) => s.cantidad_eventos);
 
   const [bandasList, setBandasList] = useState<bandaInterface[] | null>(null);
+  /** Lista completa desde Supabase; `bandasList` solo incluye grupo 1 y 2 para el calendario. */
+  const [bandasTodas, setBandasTodas] = useState<bandaInterface[] | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openModalSinDistribuir, setOpenModalSinDistribuir] = useState(false);
 
   const cargar = useCallback(async () => {
     setCargando(true);
     setError(null);
     try {
       const bandas = await getAllBandas();
+      setBandasTodas(bandas);
       const { grupo1, grupo2 } = ordenarGruposDesdeBandas(bandas);
       setBandasList([...grupo1, ...grupo2]);
     } catch {
       setError("No se pudieron cargar las bandas.");
       setBandasList([]);
+      setBandasTodas([]);
     } finally {
       setCargando(false);
     }
@@ -100,13 +107,28 @@ export default function Page() {
     bandasList != null &&
     bandasList.some((b) => b.grupo_banda === "1" || b.grupo_banda === "2");
 
+  const bandasSinDistribuir = useMemo(() => {
+    if (bandasTodas == null) return [];
+    return bandasTodas.filter(bandaSinGrupoOSubgrupo);
+  }, [bandasTodas]);
+
+  const countSinDistribuir = bandasSinDistribuir.length;
+
   return (
     <div
-      className={`${eventosTypeClassName} relative mx-auto w-full max-w-[1600px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-10 xl:px-16 2xl:px-24`}
+      className={`  mx-auto w-full max-w-[1600px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-10 xl:px-16 2xl:px-24`}
     >
+      <BandasSinDistribuirModal
+        bandas={bandasSinDistribuir}
+        open={openModalSinDistribuir}
+        onClose={() => setOpenModalSinDistribuir(false)}
+        onGuardar={async () => {
+          await cargar();
+        }}
+      />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_90%_55%_at_50%_-8%,rgba(217,119,6,0.09),transparent_52%),radial-gradient(ellipse_50%_40%_at_0%_60%,rgba(87,83,78,0.06),transparent_48%),linear-gradient(180deg,#ebe8e3_0%,#f7f5f2_42%,#e7e5e2_100%)]"
+        className="pointer-events-none fixed inset-0 -z-10"
       />
       <div
         aria-hidden
@@ -114,7 +136,7 @@ export default function Page() {
       />
 
       <header className="relative z-[1] mb-10 sm:mb-14">
-        <div className="overflow-hidden rounded-3xl border border-stone-200/70 bg-linear-to-br from-[#fcfbf9]/95 via-stone-50/90 to-amber-50/25 p-5 shadow-[0_28px_60px_-40px_rgba(28,25,23,0.65),inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-md sm:p-7 lg:p-8">
+        <div className="overflow-hidden rounded-3xl border border-stone-200/70   bg-white shadow-xl ,inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-md sm:p-7 lg:p-8">
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <p
@@ -135,9 +157,7 @@ export default function Page() {
                 className="mt-4 max-w-xl text-[0.96rem] font-normal leading-relaxed text-stone-600"
                 style={{ fontFamily: "var(--font-lexend-ui)" }}
               >
-                Los eventos se generan con la cantidad configurada en Config y
-                las bandas ya asignadas en Distribuciones. Cada bloque muestra
-                quién forma parte del lineup.
+                Las bandas se distribuyen sengun su grupo asignado
               </p>
             </div>
             <div
@@ -145,7 +165,7 @@ export default function Page() {
               style={{ fontFamily: "var(--font-lexend-ui)" }}
             >
               <span className="rounded-full border border-stone-300/80 bg-white/55 px-3 py-1.5 text-stone-600 backdrop-blur-sm">
-                {cargando ? "…" : `${bandasList?.length ?? "—"} bandas`}
+                {cargando ? "…" : `${bandasTodas?.length ?? bandasList?.length ?? "—"} bandas`}
               </span>
               {!cargando && hayDistribucion && (
                 <span className="rounded-full border border-amber-200/70 bg-amber-50/50 px-3 py-1.5 text-amber-950/85">
@@ -184,8 +204,32 @@ export default function Page() {
         </div>
       )}
 
+      {!cargando && !error && bandasTodas != null && countSinDistribuir > 0 && (
+        <div
+          className="relative z-[1] h-12 mb-6  flex flex-col gap-3 overflow-hidden rounded-2xl border border-amber-500 bg-yellow-300/50 px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6"
+          role="status"
+        >
+          <p
+            className="text-sm font-medium text-amber-950 sm:text-base"
+            style={{ fontFamily: "var(--font-lexend-ui)" }}
+          >
+            Hay {countSinDistribuir}{" "}
+            {countSinDistribuir === 1 ? "banda sin distribuir" : "bandas sin distribuir"}
+            . Completá grupo y subgrupo para que el calendario sea correcto.
+          </p>
+          <button
+            type="button"
+            onClick={() => setOpenModalSinDistribuir(true)}
+            className="inline-flex shrink-0 items-center justify-center rounded-full border border-amber-800/20 bg-amber-900/90 px-5 py-2.5 text-sm font-semibold text-amber-50 shadow-sm transition hover:bg-amber-950"
+            style={{ fontFamily: "var(--font-lexend-ui)" }}
+          >
+            Actualizar
+          </button>
+        </div>
+      )}
+
       {!cargando && !error && bandasList != null && !hayDistribucion && (
-        <div className="relative overflow-hidden rounded-3xl border border-amber-200/60 bg-linear-to-br from-amber-50/95 via-orange-50/40 to-stone-100/90 p-8 text-center shadow-[0_22px_50px_-38px_rgba(120,53,15,0.45)] sm:p-10">
+        <div className="relative overflow-hidden rounded-3xl border border-amber-200/60 bg-amber-700/90 p-8 text-center shadow-[0_22px_50px_-38px_rgba(120,53,15,0.45)] sm:p-10">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-linear-to-br from-amber-200/55 to-transparent blur-2xl"

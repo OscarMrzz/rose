@@ -1,12 +1,59 @@
 import { bandaInterface } from "@/interface/interfaces";
+import type { TipoDistribucion } from "@/stores/configuracionStore";
 import { updateGruposBanda } from "../services/bandasServices";
 
+/** Grupo fijado pero subgrupo se reparte al azar (Fisher-Yates) dentro de cada grupo. */
+function distribuirManualSoloSubgrupo(
+    subGrupos: number,
+    bandasList: bandaInterface[],
+): void {
+    const gruposPorClave = new Map<string, bandaInterface[]>();
+    for (const banda of bandasList) {
+        const g = banda.grupo_banda?.trim();
+        if (!g) continue;
+        if (!gruposPorClave.has(g)) gruposPorClave.set(g, []);
+        gruposPorClave.get(g)!.push(banda);
+    }
+
+    gruposPorClave.forEach((bandasGrupo) => {
+        const n = bandasGrupo.length;
+        if (n === 0) return;
+        const etiquetasSg: string[] = [];
+        for (let i = 0; i < n; i++) {
+            etiquetasSg.push(((i % subGrupos) + 1).toString());
+        }
+        for (let i = etiquetasSg.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [etiquetasSg[i], etiquetasSg[j]] = [etiquetasSg[j], etiquetasSg[i]];
+        }
+        bandasGrupo.forEach((banda, idx) => {
+            void updateGruposBanda(
+                banda.id_banda,
+                banda.grupo_banda,
+                etiquetasSg[idx]!,
+            );
+        });
+    });
+
+    console.log("========================================");
+    console.log("Fin: manual_grupo — subgrupos aleatorios por grupo");
+    console.log("========================================");
+}
+
 export function distribuir(
-    tipoDistribucion: "tabla" | "aleatorio",
+    tipoDistribucion: TipoDistribucion,
     cantidadGrupos: number,
     subGrupos: number,
-    bandasList: bandaInterface[]
-) {
+    bandasList: bandaInterface[],
+): void {
+    if (tipoDistribucion === "manual_grupo_subgrupo") {
+        return;
+    }
+
+    if (tipoDistribucion === "manual_grupo") {
+        distribuirManualSoloSubgrupo(subGrupos, bandasList);
+        return;
+    }
 
     if (tipoDistribucion === "tabla") {
         // 1. Agrupar por categoría
@@ -142,4 +189,12 @@ export function distribuir(
         console.log("Fin del proceso de distribución aleatoria");
         console.log("========================================");
     }
+}
+
+/** True si falta grupo o subgrupo (vacío / null / solo espacios). */
+export function bandaSinGrupoOSubgrupo(b: bandaInterface): boolean {
+    return (
+        !String(b.grupo_banda ?? "").trim() ||
+        !String(b.subgrupo_banda ?? "").trim()
+    );
 }

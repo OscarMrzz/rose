@@ -39,8 +39,7 @@ function estiloCategoria(categoria: string) {
 }
 
 /** Patrón de cuadrícula muy suave (solo líneas, sin degradado) */
-const PATRON_GRID =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath fill='none' stroke='%23d6d3d1' stroke-opacity='0.35' d='M20 0H0v20'/%3E%3C/svg%3E\")";
+
 
 export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
   const [urlImagen, setUrlImagen] = useState<string | null>(null);
@@ -198,18 +197,12 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
       {!cargando && !tieneImagen && (
         <>
           <div
-            className="absolute inset-0 z-[2] flex flex-col items-stretch justify-between overflow-hidden bg-amber-50/80"
-            style={{ backgroundImage: PATRON_GRID }}
+            className="absolute inset-0 z-[2] flex flex-col items-stretch justify-between overflow-hidden bg-white"
+
           >
             {/* Bloques decorativos planos */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-4 top-6 h-16 w-16 rotate-6 border-2 border-amber-300/80 bg-amber-100/90"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -left-3 bottom-28 h-12 w-12 -rotate-12 border-2 border-stone-300 bg-stone-100"
-            />
+       
+      
 
             <div className="relative z-[3] flex flex-1 flex-col items-center justify-center px-3 py-6 text-center">
               <div
@@ -221,10 +214,10 @@ export default function TarjetaBandaEvento({ banda, indiceVisual = 0 }: Props) {
                 <span className="h-px w-6 bg-stone-400" />
               </div>
               <p
-                className="max-h-[min(62%,13rem)] max-w-full text-balance uppercase leading-[0.94] text-stone-800"
+                className="max-h-[min(62%,13rem)] max-w-full text-balance uppercase leading-[0.94] text-stone-800 text-2xl"
                 style={{
                   fontFamily: "var(--font-anton-display), sans-serif",
-                  fontSize: "clamp(1.45rem, 6vw + 0.65rem, 2.85rem)",
+               
                   letterSpacing: "0.03em",
                 }}
               >

@@ -1,10 +1,14 @@
 "use client";
 
+import BandasSinDistribuirModal from "@/components/BandasSinDistribuirModal";
 import BandaMiniCard from "@/components/BandaMiniCard";
 import ApprovateMessage from "@/components/Message/ApprovateMessage";
 import { bandaInterface } from "@/interface/interfaces";
 import { getAllBandas } from "@/lib/services/bandasServices";
-import { distribuir } from "@/lib/utils/Distirbuir";
+import {
+  bandaSinGrupoOSubgrupo,
+  distribuir,
+} from "@/lib/utils/Distirbuir";
 import { useConfiguracionStore } from "@/stores/configuracionStore";
 import React, { useState } from "react";
 
@@ -29,12 +33,26 @@ export default function Page() {
   const [bandas1A1Grupo2, setBandas1A1Grupo2] = useState<bandaInterface[]>([]);
   const [isMostarTodo, setIsMostarTodo] = useState(false);
   const [openMessage, setOpenMessage] = useState(false);
+  const [openModalSinDistribuir, setOpenModalSinDistribuir] = useState(false);
+  const [bandasSinDistribuir, setBandasSinDistribuir] = useState<
+    bandaInterface[]
+  >([]);
 
   const iniciarDistribucion = async () => {
     const bandas = await getAllBandas();
 
-    distribuir(tipoDistribucion, 2, 2, bandas);
-    setOpenMessage(true);
+    if (tipoDistribucion !== "manual_grupo_subgrupo") {
+      distribuir(tipoDistribucion, 2, 2, bandas);
+    }
+
+    const bandasActualizadas = await getAllBandas();
+    const sinDatos = bandasActualizadas.filter(bandaSinGrupoOSubgrupo);
+    if (sinDatos.length > 0) {
+      setBandasSinDistribuir(sinDatos);
+      setOpenModalSinDistribuir(true);
+    } else {
+      setOpenMessage(true);
+    }
   };
 
   const mostrarTodo = async () => {
@@ -225,6 +243,21 @@ export default function Page() {
 
   return (
     <>
+      <BandasSinDistribuirModal
+        bandas={bandasSinDistribuir}
+        open={openModalSinDistribuir}
+        onClose={() => setOpenModalSinDistribuir(false)}
+        onGuardar={async () => {
+          const bandasActualizadas = await getAllBandas();
+          const sinDatos = bandasActualizadas.filter(bandaSinGrupoOSubgrupo);
+          setBandasSinDistribuir(sinDatos);
+          if (sinDatos.length === 0) {
+            setOpenMessage(true);
+            return true;
+          }
+          return false;
+        }}
+      />
       <ApprovateMessage
         open={openMessage}
         onClose={() => setOpenMessage(false)}
